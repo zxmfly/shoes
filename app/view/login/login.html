@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>系统登录</title>
+    {include file="layout/static"}
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+    <script>
+        //Demo
+        layui.use('form', function(){
+            var form = layui.form;
+
+            //监听提交
+            form.on('submit(formDemo)', function(data){
+                layer.msg(JSON.stringify(data.field));
+                return false;
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="login_box">
+        <div class="login_l_img"><img src="/static/images/login-img.png" /></div>
+        <div class="login">
+            <div class="login_logo"><a href="#"><img src="/static/images/login_logo.png" /></a></div>
+            <div class="login_name">
+                <p>后台管理系统</p>
+            </div>
+            <form class="layui-form">
+                <input name="username" type="text"  required  lay-verify="required" placeholder="用户名" class="layui-input">
+                <input name="password" type="password" required  lay-verify="required" placeholder="密码" class="layui-input"/>
+                <input type="text" style="width: 150px;" name="code" required lay-verify="required" placeholder="验证码" class="layui-input-inline">
+                <img class="img_code" src="{:captcha_src()}" title="点击图片刷新" onClick="this.src='{:captcha_src()}?'+Math.random();"/>
+
+                <button class=" button_sub" lay-submit lay-filter="formDemo">登录</button>
+            </form>
+        </div>
+    </div>
+    <div class="copyright">某某有限公司 版权所有©2016-2018 技术支持电话：000-00000000</div>
+</body>
+</html>
