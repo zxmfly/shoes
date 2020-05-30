@@ -15,7 +15,6 @@ class Login extends BaseController
 {
     public function index(){
 
-
         return View::fetch('login');
     }
 }

@@ -4,12 +4,19 @@ namespace app\controller;
 use app\BaseController;
 use think\facade\View;
 
-class Index extends BaseController
+class Index extends BaseAdmin
 {
     public function index()
     {
-        return '诚和鞋业';
+        return View::fetch();
     }
 
+    public function admin(){
+        return View::fetch();
+    }
+
+    public function welcome(){
+        return View::fetch();
+    }
 
 }
