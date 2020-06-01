@@ -5,7 +5,7 @@
 
 return [
     //验证码位数
-    'length'   => 5,
+    'length'   => 4,
     // 验证码字符集合
     'codeSet'  => '2345678abcdefhijkmnpqrstuvwxyzABCDEFGHJKLMNPQRTUVWXY',
     // 验证码过期时间
@@ -17,19 +17,19 @@ return [
     // 是否使用背景图
     'useImgBg' => false,
     //验证码字符大小
-    'fontSize' => 50,
+    'fontSize' => 16,
     // 是否使用混淆曲线
     'useCurve' => false,
     //是否添加杂点
-    'useNoise' => true,
+    'useNoise' => false,
     // 验证码字体 不设置则随机
     'fontttf'  => '',
     //背景颜色
-    'bg'       => [243, 251, 254],
+    'bg'       => [229, 224, 254],
     // 验证码图片高度
-    'imageH'   => 0,
+    'imageH'   => 36,
     // 验证码图片宽度
-    'imageW'   => 0,
+    'imageW'   => 115,
 
     // 添加额外的验证码设置
     // verify => [

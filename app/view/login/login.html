@@ -11,26 +11,26 @@
     <meta name="format-detection" content="telephone=no">
     <link rel="icon" href="../../favicon.ico">
     {include file="layout/static"}
-    <link rel="stylesheet" href="/static/css/public.css?1" media="all" />
+    <link rel="stylesheet" href="/static/css/public.css?2" media="all" />
 </head>
 <body class="loginBody">
 <form class="layui-form">
     <div class="login_face"><img src="/static/images/login_logo.png" class="userAvatar"></div>
     <div class="layui-form-item input-item">
         <label for="userName">用户名</label>
-        <input type="text" placeholder="请输入用户名" autocomplete="off" id="userName" class="layui-input" lay-verify="required">
+        <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" id="userName" class="layui-input" lay-verify="required">
     </div>
     <div class="layui-form-item input-item">
         <label for="password">密码</label>
-        <input type="password" placeholder="请输入密码" autocomplete="off" id="password" class="layui-input" lay-verify="required">
+        <input type="password" name="password" placeholder="请输入密码" autocomplete="off" id="password" class="layui-input" lay-verify="required">
     </div>
     <div class="layui-form-item input-item" id="imgCode">
         <label for="code">验证码</label>
-        <input type="text" placeholder="请输入验证码" autocomplete="off" id="code" class="layui-input">
-        <img src="../../images/code.jpg">
+        <input type="text" name="code" style="width: 140px;" placeholder="请输入验证码" autocomplete="off" id="code" class="layui-input">
+        <img src="{:captcha_src()}" id="refresh" alt="图片验证码" title="点击图片刷新" onClick="this.src='{:captcha_src()}?'+Math.random();">
     </div>
     <div class="layui-form-item">
-        <button class="layui-btn layui-block" lay-filter="login" lay-submit>登录</button>
+        <button class="layui-btn layui-block" lay-filter="loginFrom" lay-submit>登录</button>
     </div>
     <div class="layui-form-item layui-row">
         <a href="javascript:;" class="seraph icon-qq layui-col-xs4 layui-col-sm4 layui-col-md4 layui-col-lg4"></a>
@@ -39,4 +39,107 @@
     </div>
 </form>
 </body>
+<script>
+    //Demo
+    layui.use(['form', 'jquery', 'layer'], function() {
+        form = layui.form;
+        layer = layui.layer;
+        $ = layui.jquery;
+
+        //表单输入效果
+        $(".loginBody .input-item").click(function(e){
+            e.stopPropagation();
+            $(this).addClass("layui-input-focus").find(".layui-input").focus();
+        })
+        $(".loginBody .layui-form-item .layui-input").focus(function(){
+            $(this).parent().addClass("layui-input-focus");
+        })
+        $(".loginBody .layui-form-item .layui-input").blur(function(){
+            $(this).parent().removeClass("layui-input-focus");
+            if($(this).val() != ''){
+                $(this).parent().addClass("layui-input-active");
+            }else{
+                $(this).parent().removeClass("layui-input-active");
+            }
+        })
+
+        $(document).keydown(function (e) {
+            if (e.keyCode === 13) {
+                dologin();
+                return false;
+            }
+        });
+
+        form.verify({
+            username: function (value, item) { //value：表单的值、item：表单的DOM对象
+                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                    return '用户名不能有特殊字符';
+                }
+                if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+                    return '用户名首尾不能出现下划线\'_\'';
+                }
+                if (/^\d+\d+\d$/.test(value)) {
+                    return '用户名不能全为数字';
+                }
+            }
+
+            //我们既支持上述函数式的方式，也支持下述数组的形式
+            //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+            , password: [
+                /^[\S]{6,12}$/
+                , '密码必须6到12位，且不能出现空格'
+            ]
+        });
+
+        //监听提交
+        form.on('submit(loginFrom)', function (data) {
+            jq_post(data.field);
+            return false;
+        });
+    });
+
+
+
+    function dologin(){
+        var account = $.trim($('#userName').val());
+        var pwd = $.trim($('#password').val());
+        var captcha_code = $.trim($('#code').val());
+        if(account == ''){
+            layer.msg('请输入用户名',{icon:2, time:1000});
+            $('#userName').focus();
+            return;
+        }
+        if(pwd == ''){
+            layer.msg('请输入密码',{icon:2, time:1000});
+            $('#password').focus();
+            return;
+        }
+        if(captcha_code == ''){
+            layer.msg('请输入密码',{icon:2, time:1000});
+            $('#code').focus();
+            return;
+        }
+        jq_post({'username':account,'password':pwd,'code':captcha_code});
+    }
+
+    function jq_post(data) {
+        $.post('/index.php/login/loginAction',data,function(res){
+            if(res.code>0){
+                layer.msg(res.msg, {icon: 2, time:1000});
+                var captcha = document.getElementById('refresh');
+                captcha.src = '{:captcha_src()}?' + Math.random();
+            }else{
+                layer.msg(res.msg, {icon: 1, time:1000});
+                setTimeout(function(){
+                    window.location.href = '/';
+                },500);
+            }
+        },'json');
+    }
+
+    if (window != top) {
+        top.location.href = location.href;
+    }
+
+    </script>
 </html>
