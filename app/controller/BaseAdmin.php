@@ -17,19 +17,21 @@ use think\facade\Session;
 class BaseAdmin extends BaseController
 {
     public $shoesAdmin;
-    public $_admin;
+    public $_admin = [];
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->shoesAdmin = Session::get('shoesAdmin');
-        $this->_admin = Users::where('user_name', $this->shoesAdmin)->find();
-        if(empty($this->learntTpAdmin)){
-            //header('location:/login');
-            //exit;
+        if(empty($this->shoesAdmin)){
+            header('location:/login');
+            exit;
         }
+
+        if(empty($this->_admin))
+            $this->_admin = Users::where('user_name', $this->shoesAdmin)->find();
+
     }
 
-    //判断权限
 
     public function loginOut(){
         Session::clear();
