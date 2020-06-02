@@ -50,3 +50,7 @@ All rights reserved。
 ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
 
 更多细节参阅 [LICENSE.txt](LICENSE.txt)
+
+// 扩展
+1、可以使用 font awesome 扩展图标
+2、https://www.iconfont.cn/ 阿里图库

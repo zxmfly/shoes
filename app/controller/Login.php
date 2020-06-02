@@ -17,4 +17,8 @@ class Login extends BaseController
 
         return View::fetch('login');
     }
+
+    public function loginAction(){
+
+    }
 }

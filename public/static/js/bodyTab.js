@@ -66,9 +66,9 @@ layui.define(["element","jquery"],function(exports){
 			var title = '';
 			if(_this.find("i.seraph,i.layui-icon").attr("data-icon") != undefined){
 				if(_this.find("i.seraph").attr("data-icon") != undefined){
-					title += '<i class="seraph layui-icon '+_this.find("i.seraph").attr("data-icon")+'"></i>';
+					title += '<i class="seraph '+_this.find("i.seraph").attr("data-icon")+'"></i>';
 				}else{
-					title += '<i class="layui-icon">'+_this.find("i.layui-icon").attr("data-icon")+'</i>';
+                    title += '<i class="layui-icon '+_this.find("i.layui-icon").attr("data-icon")+'"></i>';
 				}
 			}
 			//已打开的窗口中不存在
