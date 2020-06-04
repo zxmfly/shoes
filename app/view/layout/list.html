@@ -30,11 +30,12 @@
     {block name="table"}{/block}
 
     <!--操作-->
-    <script type="text/html" id="userListBar">
+    {block name="script_blocl"}
+    <script type="text/html" id="listBar">
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-        <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="usable">已启用</a>
         <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
     </script>
+    {/block}
 </form>
 </body>
 </html>
