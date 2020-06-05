@@ -24,7 +24,7 @@ class Worker extends BaseAdmin
         $count = Users::count();
         $data = [];
         if($count) {
-            $data = Users::select()->toArray();
+            $data = Users::select();
         }
         $code = 0;
         $msg = 'ok';
@@ -41,11 +41,11 @@ class Worker extends BaseAdmin
                 ->whereOr('number', $data['number'])
                 ->find();
             if($user){
-                return json($data);
+                return json(['code'=>2,'msg'=>'该员工已存在,请勿重复添加']);
             }
-            $data['update_time'] = 0;
+            unset($data['edit_id'],$data['action']);
             $data['create_time'] = time();
-            $data['password'] = $data['password'] ? $data['password'] : '123';
+            $data['password'] = $data['password'] ? $data['password'] : $data['user_name'].'123';
             $data['password'] = md5($data['user_name'].$data['password']);
             $insert = Users::insert($data);
             $res = $insert ? ['code'=>0,'msg'=>'添加成功'] : ['code'=>1,'msg'=>'添加失败'];
