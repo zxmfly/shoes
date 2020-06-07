@@ -1,12 +1,5 @@
 {extend name="layout/list" /}
 {block name="title"}员工列表{/block}
-{block name="script_block"}
-<script type="text/html" id="listBar">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="usable">封禁</a>
-    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
-</script>
-{/block}
 {block name="header"}
 <blockquote class="layui-elem-quote quoteBox" >
     <form class="layui-form">
@@ -44,8 +37,8 @@
             cellMinWidth : 95,
             page : true,
             height : "full-125",
-            limits : [20,50,100],
-            limit : 20,
+            limits : {$page_list},
+            limit : {$page_defult},
             id : listId,
             //toolbar: 'true', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
             cols : [[
@@ -53,9 +46,9 @@
                 {field: 'user_name', title: '用户名', minWidth:100, align:"center"},
                 {field: 'number', title: '工号', minWidth:200, align:'center'},
                 {field: 'name', title: '姓名', align:'center'},
-                {field: 'sex', title: '性别', align:'center'},
-                {field: 'work_id', title: '工作', align:'center'},
-                {field: 'role_id', title: '权限', align:'center'},
+                {field: 'sex_text', title: '性别', align:'center'},
+                {field: 'work_text', title: '工作', align:'center'},
+                {field: 'role_text', title: '权限', align:'center'},
                 {field: 'status_text', title: '状态',  align:'center'},
                 {field: 'create_time', title: '加入时间', align:'center'},
                 {title: '操作', minWidth:175, templet:'#listBar',fixed:"right",align:"center"}
@@ -87,12 +80,16 @@
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     if(edit){
-                        body.find(".userName").val(edit.userName);  //登录名
-                        body.find(".userEmail").val(edit.userEmail);  //邮箱
-                        body.find(".userSex input[value="+edit.userSex+"]").prop("checked","checked");  //性别
-                        body.find(".userGrade").val(edit.userGrade);  //会员等级
-                        body.find(".userStatus").val(edit.userStatus);    //用户状态
-                        body.find(".userDesc").text(edit.userDesc);    //用户简介
+                        body.find(".user_name").val(edit.user_name);
+                        body.find(".number").val(edit.number);  //工号
+                        body.find(".userSex input[value="+edit.sex+"]").prop("checked","checked");  //性别
+                        body.find(".work_id option[value="+edit.work_id+"]").attr("selected",true);
+                        body.find(".role_id option[value="+edit.role_id+"]").attr("selected",true);
+                        body.find(".status option[value="+edit.status+"]").attr("selected",true);
+                        body.find(".real_name").val(edit.name);  //会员等级
+                        body.find(".password_text").text('密码为空则不修改');
+                        body.find(".edit_id").val(edit.id);
+                        body.find(".action").val('edit_user');
                         form.render();
                     }
                     setTimeout(function(){
@@ -118,20 +115,25 @@
         $(".delAll_btn").click(function(){
             var checkStatus = table.checkStatus(listId),
                 data = checkStatus.data,
-                uid = [];
+                id = [];
             if(data.length > 0) {
                 for (var i in data) {
-                    uid.push(data[i]);
+                    id.push(data[i].id);
                 }
                 layer.confirm('确定删除选中的用户？', {icon: 3, title: '提示信息'}, function (index) {
-                    alert(uid);
-                    layer.close(index);
-                    /*$.get("删除文章接口",{
-                         uid : uid  //将需要删除的newsId作为参数传入
-                    },function(data){
-                        tableIns.reload();
-                        layer.close(index);
-                    })*/
+                    $.get("/index.php/worker/delWorker",{
+                        id : id
+                    },function(res){
+                        if (res.code > 0) {
+                            layer.msg(res.msg, {icon: 2, time: 500});
+                        } else {
+                            layer.msg(res.msg, {time: 500});
+                            setTimeout(function(){
+                                tableIns.reload();
+                            },500);
+                            layer.close(index);
+                        }
+                    })
                 })
             }else{
                 layer.msg("请选择需要删除的用户");
@@ -142,41 +144,26 @@
         table.on('tool(userList)', function(obj){
             var layEvent = obj.event,
                 data = obj.data;
-
             if(layEvent === 'edit'){ //编辑
                 addUser(data);
-            }else if(layEvent === 'usable'){ //启用禁用
-                var _this = $(this),
-                    usableText = "是否确定封禁此用户？",
-                    btnText = "解封";
-                if(_this.text()=="解封"){
-                    usableText = "是否确定解封此用户？",
-                        btnText = "封禁";
-                }
-                layer.confirm(usableText,{
-                    icon: 3,
-                    title:'系统提示',
-                    cancel : function(index){
-                        layer.close(index);
-                    }
-                },function(index){
-                    _this.text(btnText);
-                    layer.close(index);
-                },function(index){
-                    layer.close(index);
-                });
             }else if(layEvent === 'del'){ //删除
                 layer.confirm('确定删除此用户？',{icon:3, title:'提示信息'},function(index){
-                    // $.get("删除文章接口",{
-                    //     newsId : data.newsId  //将需要删除的newsId作为参数传入
-                    // },function(data){
-                    tableIns.reload();
-                    layer.close(index);
-                    // })
+                    $.get('/index.php/worker/delWorker',{
+                         id : data.id
+                    },function(res){
+                        if (res.code > 0) {
+                            layer.msg(res.msg, {icon: 2, time: 500});
+                        } else {
+                            layer.msg(res.msg, {time: 500});
+                            setTimeout(function(){
+                                tableIns.reload();
+                            },500);
+                            layer.close(index);
+                        }
+                    })
                 });
             }
         });
-
     });
 </script>
 {/block}
