@@ -28,3 +28,10 @@ if(!function_exists('getDict')) {
         return $key ? $dict[$key] : $dict;
     }
 }
+
+if(!function_exists('getRs')) {
+    function getRs($code=0,$msg='操作成功',$data=[]) : array
+    {
+        return compact('code','msg', 'data');
+    }
+}

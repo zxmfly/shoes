@@ -7,6 +7,11 @@ class Index extends BaseAdmin
 {
     public function index()
     {
+        $user = $this->_admin;
+        $data = [
+            'admin' => $user['user_name'],
+        ];
+        View::assign($data);
         return View::fetch();
     }
 

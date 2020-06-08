@@ -22,14 +22,14 @@ class BaseAdmin extends BaseController
     {
         parent::__construct($app);
         $this->shoesAdmin = Session::get('shoesAdmin');
-        /*if(empty($this->shoesAdmin)){
+        if(empty($this->shoesAdmin)){
             header('location:/login');
             exit;
         }
 
         if(empty($this->_admin))
             $this->_admin = Users::where('user_name', $this->shoesAdmin)->find();
-        */
+
     }
 
 

@@ -18,7 +18,7 @@
     <div class="login_face"><img src="/static/images/login_logo.png" class="userAvatar"></div>
     <div class="layui-form-item input-item">
         <label for="userName">用户名</label>
-        <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" id="userName" class="layui-input" lay-verify="required">
+        <input type="text" name="user_name" placeholder="请输入用户名" autocomplete="off" id="userName" class="layui-input" lay-verify="required">
     </div>
     <div class="layui-form-item input-item">
         <label for="password">密码</label>
@@ -115,19 +115,30 @@
             return;
         }
         if(captcha_code == ''){
-            layer.msg('请输入密码',{icon:2, time:1000});
+            layer.msg('请输入验证码',{icon:2, time:1000});
             $('#code').focus();
             return;
         }
-        jq_post({'username':account,'password':pwd,'code':captcha_code});
+        jq_post({'user_name':account,'password':pwd,'code':captcha_code});
     }
 
     function jq_post(data) {
+        var ln = window.sessionStorage.getItem("ln");
+        if(ln >= 5){
+            layer.msg('点击次数过多，请稍后重试', {icon: 2, time:1000});
+            setTimeout(function(){
+                ln = 0;
+                window.sessionStorage.setItem("ln", ln);
+            },30000);
+            return false;
+        }
         $.post('/index.php/login/loginAction',data,function(res){
             if(res.code>0){
                 layer.msg(res.msg, {icon: 2, time:1000});
                 var captcha = document.getElementById('refresh');
                 captcha.src = '{:captcha_src()}?' + Math.random();
+                ln++;
+                window.sessionStorage.setItem("ln", ln);
             }else{
                 layer.msg(res.msg, {icon: 1, time:1000});
                 setTimeout(function(){
