@@ -21,11 +21,10 @@
 {block name="table"}
     <table id="userList" lay-filter="userList"></table>
 <script type="text/javascript">
-    layui.use(['layer','form','laytpl','table'],function(){
+    layui.use(['layer','form','table'],function(){
         var form = layui.form,
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery,
-            laytpl = layui.laytpl,
             table = layui.table;
 
         var listId = 'userListTable';//对应列表的唯一ID
@@ -72,9 +71,9 @@
         });
 
         //添加用户
-        function addUser(edit){
+        function addUser(edit, title){
             var index = layui.layer.open({
-                title : "添加员工",
+                title : title,
                 type : 2,
                 content : "/index.php/worker/addWorker",
                 success : function(layero, index){
@@ -108,7 +107,7 @@
             })
         }
         $(".addNews_btn").click(function(){
-            addUser();
+            addUser('', '添加员工');
         })
 
         //批量删除
@@ -145,7 +144,7 @@
             var layEvent = obj.event,
                 data = obj.data;
             if(layEvent === 'edit'){ //编辑
-                addUser(data);
+                addUser(data, '编辑员工');
             }else if(layEvent === 'del'){ //删除
                 layer.confirm('确定删除此用户？',{icon:3, title:'提示信息'},function(index){
                     $.get('/index.php/worker/delWorker',{

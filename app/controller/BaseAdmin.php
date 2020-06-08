@@ -18,9 +18,12 @@ class BaseAdmin extends BaseController
 {
     public $shoesAdmin;
     public $_admin = [];
+    public $_pageArr = [];
+    public $_pageDefault = 20;
     public function __construct(App $app)
     {
         parent::__construct($app);
+        $this->_pageArr = getDict('page');
         $this->shoesAdmin = Session::get('shoesAdmin');
         if(empty($this->shoesAdmin)){
             header('location:/login');

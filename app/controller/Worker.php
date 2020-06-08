@@ -9,6 +9,7 @@ namespace app\controller;
 
 
 use app\model\User;
+use app\model\Work;
 use think\facade\Db;
 use think\facade\Request;
 use think\facade\View;
@@ -17,9 +18,8 @@ use app\model\Users;
 class Worker extends BaseAdmin
 {
     public function index(){
-        $pageArr = getDict('page');
-        $page_defult = $pageArr[0];
-        $page_list = json_encode($pageArr);
+        $page_defult = $this->_pageDefault;
+        $page_list = json_encode($this->_pageArr);
         $data = compact('page_defult','page_list');
         View::assign($data);
         return View::fetch();
@@ -104,6 +104,61 @@ class Worker extends BaseAdmin
     }
 
     public function work(){
+        $page_defult = $this->_pageDefault;
+        $page_list = json_encode($this->_pageArr);
+        $data = compact('page_defult','page_list');
+        View::assign($data);
         return View::fetch();
+    }
+
+    public function getWork(){
+        $param = Request::param();
+        $page = isset($param['page']) ? $param['page'] : 1;
+        $limit = isset($param['limit']) ? $param['limit'] : 20;
+        $all = Work::getAll(true, $page, $limit);
+        $count = $all['count'];
+        $data = $all['data'];
+        $code = 0;
+        $msg = 'ok';
+        $list = compact('code','msg','count','data');
+
+        return json($list);
+    }
+
+    public function addWork(){
+        $data = Request::param();
+        if(empty($data)) return View::fetch();
+        if($data['id']){
+            $update = Work::updateUsers($data);
+            if($update){
+                $rs = ['code'=>0,'msg'=>'修改成功'];
+            }else{
+                $rs = ['code'=>1,'msg'=>'修改失败'];
+            }
+            return json($rs);
+        }else{
+            $work = Work::where('work', $data['work'])->find();
+            if($work){
+                return json(['code'=>2,'msg'=>'该工作类别已存在,请勿重复添加']);
+            }
+            $insert = Work::insert($data);
+            $res = $insert ? ['code'=>0,'msg'=>'添加成功'] : ['code'=>1,'msg'=>'添加失败'];
+            return json($res);
+        }
+    }
+
+    public function delWork(){
+        if(Request::param('id')) {
+            $id = Request::param('id');
+            $delete = Work::destroy($id);
+            if($delete){
+                $rs = ['code'=>0,'msg'=>'删除成功'];
+            }else{
+                $rs = ['code'=>1,'msg'=>'删除失败'];
+            }
+        }else{
+            $rs = ['code'=>3,'msg'=>'操作有误'];
+        }
+        return json($rs);
     }
 }
