@@ -36,7 +36,7 @@ class Login extends BaseController
         if(!captcha_check($all['code'])){
             return json(getRs(1,'验证码错误'));
         }
-        $admin = Users::where('user_name', $all['user_name'])->find()->toArray();
+        $admin = Users::where('user_name', $all['user_name'])->find();
         if(empty($admin)) {
             return json(getRs(1, '账号不存在'));
         }elseif ($admin['password'] != md5($all['user_name'].$all['password'])){

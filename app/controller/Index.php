@@ -9,7 +9,7 @@ class Index extends BaseAdmin
     {
         $user = $this->_admin;
         $data = [
-            'admin' => $user['user_name'],
+            'admin' => $user['name'],
         ];
         View::assign($data);
         return View::fetch();
@@ -20,6 +20,11 @@ class Index extends BaseAdmin
     }
 
     public function welcome(){
+        $user = $this->_admin;
+        $data = [
+            'admin' => $user['name'],
+        ];
+        View::assign($data);
         return View::fetch();
     }
 
