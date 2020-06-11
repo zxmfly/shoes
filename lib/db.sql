@@ -38,6 +38,21 @@ CREATE TABLE `ch_channel`  (
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '渠道列表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for ch_check
+-- ----------------------------
+DROP TABLE IF EXISTS `ch_check`;
+CREATE TABLE `ch_check`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `order_id` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '订单号',
+  `type` tinyint(4) UNSIGNED NOT NULL DEFAULT 0 COMMENT '审核类型',
+  `crate_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '审核时间',
+  `operator_id` int(11) NOT NULL COMMENT '审核人ID',
+  `operator` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '审核人',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `oid`(`order_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '审核记录表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for ch_customer
 -- ----------------------------
 DROP TABLE IF EXISTS `ch_customer`;
@@ -68,8 +83,10 @@ CREATE TABLE `ch_order`  (
   `send_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '发货ID',
   `prices` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '最终价格',
   `operator_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '操作者ID',
-  `operator` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '操作者',
-  `track_id` int(11) UNSIGNED NULL DEFAULT 0 COMMENT '追踪ID',
+  `operator` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '操作者',
+  `track_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '追踪ID',
+  `check_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '审核ID',
+  `repair_order` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '返修对应订单号',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `express`(`customer_express`) USING BTREE,
   UNIQUE INDEX `order_id`(`order_id`) USING BTREE,
@@ -85,13 +102,17 @@ CREATE TABLE `ch_task`  (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `oid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单id',
   `type` tinyint(255) UNSIGNED NOT NULL DEFAULT 1 COMMENT '任务类型(1维修，2返修)',
-  `repair_id` tinyint(4) UNSIGNED NOT NULL DEFAULT 0 COMMENT '维修ID',
+  `fix_type` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '修理类型',
+  `task_explain` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '任务说明',
   `assess_prices` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '估价',
   `uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '师傅ID',
   `user_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '师傅名称',
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '任务创建时间',
   `operator_id` int(11) NOT NULL COMMENT '操作者ID',
   `operator` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '操作者',
+  `status` tinyint(4) UNSIGNED NOT NULL COMMENT '任务状态',
+  `prices` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '最终价格',
+  `finish_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '完成时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
@@ -110,4 +131,3 @@ CREATE TABLE `ch_track`  (
   INDEX `oid`(`order_id`) USING BTREE,
   INDEX `ut`(`create_time`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单追踪表' ROW_FORMAT = Dynamic;
-
