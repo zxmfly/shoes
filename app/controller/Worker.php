@@ -10,7 +10,6 @@ namespace app\controller;
 
 use app\model\User;
 use app\model\Work;
-use think\facade\Db;
 use think\facade\Request;
 use think\facade\View;
 use app\model\Users;

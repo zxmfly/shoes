@@ -1,0 +1,103 @@
+{extend name="layout/add" /}
+{block name="title"}新增订单{/block}
+{block name="form_block"}
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">运单号</label>
+    <div class="layui-input-inline">
+        <input type="text" name="customer_express" placeholder="请输入快递运单号" lay-verify="required" class="layui-input customer_express" value="">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">订单来源</label>
+    <div class="layui-input-inline work_id">
+        <select name="work_id" lay-verify="required" lay-search>
+            <option></option>
+            {foreach $channel as $key=>$v }
+            <option value="{$key}">{$v}</option>
+            {/foreach}
+        </select>
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">客户信息</label>
+    <div class="layui-input-inline">
+        <input type="text" name="customer_keywords" placeholder="请输入姓名/手机号" class="layui-input customer_express" value="">
+    </div>
+    <div class="layui-form-mid layui-word-aux keywords_text">老客户查询自动填写，新客户手动添加</div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">姓名</label>
+    <div class="layui-input-inline">
+        <input type="text" name="name" placeholder="请输入姓名" lay-verify="required" class="layui-input name" value="">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">电话</label>
+    <div class="layui-input-inline">
+        <input type="text" name="phone_number" placeholder="请输入姓名/手机号" lay-verify="required|number|phone" class="layui-input phone_number" value="">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-form-text layui-col-xs12">
+    <label class="layui-form-label">地址</label>
+    <div class="layui-input-inline">
+        <textarea placeholder="请输入地址" class="layui-textarea address" name="address"></textarea>
+    </div>
+</div>
+
+<script>
+    layui.use(['form','layer'],function(){
+        var form = layui.form,
+            layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery;
+
+        form.on("submit(add)",function(data) {
+            $.post('/index.php/order/addOrder', data.field, function (res) {
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 2, time: 500});
+                } else if(res.code == 0) {
+                    layer.msg(res.msg, {time: 500});
+                    setTimeout(function(){
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },2000);
+                }else{
+                    layer.msg('保存失败', {icon: 2, time: 500});
+                }
+            }, 'json');
+            return false;
+        });
+
+        //表单赋值
+        $(".customer_express").bind('input propertychange',function () {
+            var keywords = $.trim($(this).val());
+            if(/^[0-9]+$/.test(keywords)){
+                if(keywords.length > 7) getKeywords(keywords);
+            }else{
+                if(keywords.length >= 2) getKeywords(keywords);
+            }
+            form.val('addFrom', {
+                "name": keywords // "name": "value"
+                ,"phone_number": keywords
+                ,"address": "水电费水电费是发送到发"
+            });
+        });
+
+        function getKeywords(value){
+            $.get('/index.php/order/getCustomer',{
+                keywords : value
+            },function(res){
+                console.log(res);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 2, time: 500});
+                } else {
+                    layer.msg(res.msg, {time: 500});
+                    //layer.msg(JSON.stringify(res.data), {time: 500});
+                }
+            })
+        }
+
+
+    });
+</Script>
+{/block}

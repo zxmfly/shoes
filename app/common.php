@@ -24,6 +24,11 @@ if(!function_exists('getDict')) {
                 1 => '普通员工',
                 2 => '系统管理员'
             ],
+            'channel' => [
+                1 => '淘宝',
+                2 => '微信',
+                3 => '百度',
+            ],
         ];
         return $key ? $dict[$key] : $dict;
     }
