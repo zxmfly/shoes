@@ -1,5 +1,40 @@
 {extend name="layout/add" /}
 {block name="title"}新增订单{/block}
+{block name="style_block"}
+<style>
+    /* 添加道具模块 */
+    .autoMain{
+        position:absolute;
+        background-color:#FFF;
+        width:200px;
+        border:1px solid #CCC;
+        display:none;
+        z-index:9999;
+    }
+    .autoList{
+        list-style:none;
+        margin:0px;
+        padding:0px;
+        height:200px;
+        overflow-y:auto;
+    }
+    .autoList li{
+        border-bottom:1px solid #DDD;
+        padding:2px 10px;
+        cursor:pointer;
+        line-height: 25px;
+    }
+    .autoList li:hover{
+        background-color:#C9C9C9!important;
+    }
+
+    .layui-layer-title{
+        background-color:#5FB878!important;
+        color: #FFF!important;
+    }
+
+</style>
+{/block}
 {block name="form_block"}
 <div class="layui-form-item layui-row layui-col-xs12">
     <label class="layui-form-label">运单号</label>
@@ -19,11 +54,10 @@
     </div>
 </div>
 <div class="layui-form-item layui-row layui-col-xs12">
-    <label class="layui-form-label">客户信息</label>
+    <label class="layui-form-label" style="color:#009688;">搜索客户</label>
     <div class="layui-input-inline">
-        <input type="text" name="customer_keywords" placeholder="请输入姓名/手机号" class="layui-input customer_express" value="">
+        <input type="text" name="customer_keywords" placeholder="姓名/手机号后4位" class="layui-input customer_keywords" value="">
     </div>
-    <div class="layui-form-mid layui-word-aux keywords_text">老客户查询自动填写，新客户手动添加</div>
 </div>
 <div class="layui-form-item layui-row layui-col-xs12">
     <label class="layui-form-label">姓名</label>
@@ -38,10 +72,24 @@
     </div>
 </div>
 <div class="layui-form-item layui-row layui-form-text layui-col-xs12">
+    <label class="layui-form-label">邮编</label>
+    <div class="layui-input-inline">
+        <input type="text" name="postal_code" placeholder="请输入邮编" class="layui-input postal_code" value="">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-form-text layui-col-xs12">
     <label class="layui-form-label">地址</label>
     <div class="layui-input-inline">
         <textarea placeholder="请输入地址" class="layui-textarea address" name="address"></textarea>
     </div>
+</div>
+
+<div class="autoMain layui-input-inline layui-layer layui-layer-page layui-layer-dir">
+    <div class="layui-layer-title">客户信息</div>
+    <ul class="autoList">
+    </ul>
+    <span class="layui-layer-resize" style="top:15px; right: 40px;"><a id="resetList" href="javascript:;" style="color: #FFF!important;" class="layui-icon layui-icon-refresh-3"></a></span>
+    <span class="layui-layer-setwin"><a id="closeList" style="top:-3px;  font-size: 20px; color: #FFF!important;"  class="layui-icon layui-icon-close" href="javascript:;"></a></span>
 </div>
 
 <script>
@@ -68,35 +116,71 @@
             return false;
         });
 
-        //表单赋值
-        $(".customer_express").bind('input propertychange',function () {
-            var keywords = $.trim($(this).val());
+        $(".customer_keywords").focus(showItem).keyup(showItem);
+        var offset = $(".customer_keywords").offset();
+        $(".autoMain").css("top",offset.top+38).css("left",offset.left);
+        $("#closeList").click(function(){
+            $(".customer_keywords").val("");
+            $(".autoList>li").remove();
+            $(".autoMain").hide();
+        });
+        $("#resetList").click(function(){
+            $(".customer_keywords").val("");
+            $(".autoList>li").remove();
+            showItem();
+        });
+
+        function addCustomer(obj) {
+            var str = $.trim($(obj).attr('name'));
+            if(str == 'close'){
+                $(".customer_keywords").val("");
+                $(".autoList>li").remove();
+                $(".autoMain").hide();
+            }else {
+                var arr = str.split('|');
+                form.val('addFrom', {
+                    "name": arr[0] // "name": "value"
+                    , "phone_number": arr[1]
+                    , "address": arr[2]
+                    , "postal_code": arr[3]
+                });
+                $(".customer_keywords").val("");
+                $(".autoList>li").remove();
+                $(".autoMain").hide();
+            }
+        }
+
+        function showItem(){
+            $(".autoMain").show();
+            keywords = $(".customer_keywords").val();
             if(/^[0-9]+$/.test(keywords)){
-                if(keywords.length > 7) getKeywords(keywords);
+                if(keywords.length >= 4) getKeywords(keywords);
             }else{
                 if(keywords.length >= 2) getKeywords(keywords);
             }
-            form.val('addFrom', {
-                "name": keywords // "name": "value"
-                ,"phone_number": keywords
-                ,"address": "水电费水电费是发送到发"
-            });
-        });
+        }
 
         function getKeywords(value){
             $.get('/index.php/order/getCustomer',{
                 keywords : value
             },function(res){
-                console.log(res);
-                if (res.code > 0) {
-                    layer.msg(res.msg, {icon: 2, time: 500});
-                } else {
-                    layer.msg(res.msg, {time: 500});
-                    //layer.msg(JSON.stringify(res.data), {time: 500});
+                $(".autoList>li").remove();
+                if(res.code == 1){
+                    $(".autoList").append('<li name="close" style="color: red">无对应客户信息</li>');
+                }else if(res.code == 0) {
+                    var data = res.data;
+                    for (var key in data) {
+                        var text = '<li name="'+data[key]+'">'+key+'</li>';
+                        $(".autoList").append(text);
+                    }
+                }else{
+                    $(".autoList").append('<li name="close" style="color: red">查询错误</li>');
                 }
+                $(".autoList>li").click(function(){
+                    addCustomer(this);
+                });
             })
         }
-
 
     });
 </Script>

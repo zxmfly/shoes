@@ -34,7 +34,7 @@ class Login extends BaseController
             return json(getRs(1,'验证码不能为空'));
         }
         if(!captcha_check($all['code'])){
-            return json(getRs(1,'验证码错误'));
+            return json(getRs(2,'验证码错误'));
         }
         $admin = Users::where('user_name', $all['user_name'])->find();
         if(empty($admin)) {

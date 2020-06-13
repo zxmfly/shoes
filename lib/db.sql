@@ -61,6 +61,7 @@ CREATE TABLE `ch_customer`  (
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '名字',
   `phone_number` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '电话号码',
   `address` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '地址',
+  `postal_code` varchar(10) DEFAULT '' COMMENT '邮政编码',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `name`(`name`) USING BTREE,
   INDEX `pn`(`phone_number`) USING BTREE

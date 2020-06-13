@@ -134,6 +134,10 @@
         }
         $.post('/index.php/login/loginAction',data,function(res){
             if(res.code>0){
+                if(res.code == 2){
+                    $('#code').val('');
+                    $('#code').focus();
+                }
                 layer.msg(res.msg, {icon: 2, time:1000});
                 var captcha = document.getElementById('refresh');
                 captcha.src = '{:captcha_src()}?' + Math.random();
