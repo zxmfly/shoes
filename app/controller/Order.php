@@ -29,7 +29,7 @@ class Order extends BaseAdmin
             if($customer){
                 foreach ($customer as $row){
                     $key = $row['name'] .' | '.$row['phone_number'];
-                    $data[$key] = $row['name'] .'|'.$row['phone_number'] .'|'.$row['address'].'|'.$row['postal_code'];
+                    $data[$key] = $row['name'] .'|'.$row['phone_number'] .'|'.$row['address'].'|'.$row['postal_code'].'|'.$row['id'];
                 }
                 $rs = getRs(0, '操作成功', $data);
             }else{

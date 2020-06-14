@@ -83,6 +83,7 @@
         <textarea placeholder="请输入地址" class="layui-textarea address" name="address"></textarea>
     </div>
 </div>
+<input type="hidden" name="customer_id" class="customer_id" value="">
 
 <div class="autoMain layui-input-inline layui-layer layui-layer-page layui-layer-dir">
     <div class="layui-layer-title">客户信息</div>
@@ -143,6 +144,7 @@
                     , "phone_number": arr[1]
                     , "address": arr[2]
                     , "postal_code": arr[3]
+                    , "customer_id": arr[4]
                 });
                 $(".customer_keywords").val("");
                 $(".autoList>li").remove();
