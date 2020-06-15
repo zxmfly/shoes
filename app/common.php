@@ -49,3 +49,17 @@ if(!function_exists('getRs')) {
         return compact('code','msg', 'data');
     }
 }
+
+if(!function_exists('getDateTime')) {
+    function getDateTime($date_time = '') : array
+    {
+        if(!$date_time) return [];
+
+        $date_time = urldecode($date_time);
+        $date_arr = explode(' - ', $date_time);
+        $start_time = strtotime($date_arr[0]);
+        $end_time = strtotime($date_arr[1]);
+
+        return compact('start_time', 'end_time');
+    }
+}

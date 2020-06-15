@@ -105,6 +105,7 @@
                     layer.msg(res.msg, {icon: 2, time: 1000});
                 } else if(res.code == 0) {
                     layer.msg(res.msg, {time: 500});
+                    document.getElementById("addFrom").reset();
                 }
             }, 'json');
             return false;

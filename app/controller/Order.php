@@ -17,12 +17,40 @@ class Order extends BaseAdmin
 {
     public function index(){
         $status_arr = getDict('order_status');
-
         $page_defult = $this->_pageDefault;
         $page_list = json_encode($this->_pageArr);
         $data = compact('page_defult','page_list','status_arr');
+
         View::assign($data);
         if(empty($param)) return View::fetch();
+    }
+
+    public function getList(){
+        $param = Request::param();
+        $where = [];
+        if(isset($param['customer_express']) && $param['customer_express']){
+            $where[] = ['customer_express','=',$param['customer_express']];
+        }
+        if(isset($param['status']) && $param['status']!= ''){
+            $where[] = ['status', '=', $param['status']];
+        }
+        if(isset($param['order_id']) && $param['order_id']){
+            $where[] = ['order_id', '=', $param['order_id']];
+        }
+        if(isset($param['date_time']) && $param['date_time']){
+            $time_arr = getDateTime($param['date_time']);
+            $where[] = ['create_time','between',[$time_arr['start_time'], $time_arr['end_time']]];
+        }
+        $page = isset($param['page']) ? $param['page'] : 1;
+        $limit = isset($param['limit']) ? $param['limit'] : $this->_pageDefault;
+        $all = Orders::getAll($where, $page, $limit);
+        $count = $all['count'];
+        $data = $all['data'];
+        $code = 0;
+        $msg = 'ok';
+        $list = compact('code','msg','count','data');
+
+        return json($list);
     }
 
     public function getCustomer(){

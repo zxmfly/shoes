@@ -36,7 +36,7 @@ class Worker extends BaseAdmin
             }
         }
         $page = isset($param['page']) ? $param['page'] : 1;
-        $limit = isset($param['limit']) ? $param['limit'] : 20;
+        $limit = isset($param['limit']) ? $param['limit'] : $this->_pageDefault;;
         $all = Users::getAll($where, $page, $limit);
         $count = $all['count'];
         $data = $all['data'];

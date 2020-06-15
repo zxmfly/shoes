@@ -30,7 +30,7 @@
 </blockquote>
 {/block}
 {block name="table"}
-<table id="userList" lay-filter="userList"></table>
+<table id="list" lay-filter="list"></table>
 <script type="text/javascript">
     layui.use(['layer','form','table','laydate'],function(){
         var form = layui.form,
@@ -39,7 +39,7 @@
             table = layui.table,
             laydate = layui.laydate;
 
-        var listId = 'userListTable';//对应列表的唯一ID
+        var listId = 'orderList';//对应列表的唯一ID
 
         //日期时间选择器
         laydate.render({
@@ -50,19 +50,18 @@
 
         //用户列表
         var tableIns = table.render({
-            elem: '#userList',
-            url : '/index.php/order/index',
+            elem: '#list',
+            url : '/index.php/order/getList',
             cellMinWidth : 95,
             page : true,
-            height : "full-125",
+            height : "full-103",
             limits : {$page_list},
             limit : {$page_defult},
             id : listId,
             //toolbar: 'true', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
             cols : [[
-                {type: "checkbox", fixed:"left", width:50},
-                {field: 'user_name', title: '用户名', minWidth:100, align:"center"},
-                {field: 'number', title: '工号', minWidth:200, align:'center'},
+                {field: 'user_name', title: '用户名', align:"center"},
+                {field: 'number', title: '工号',  align:'center'},
                 {field: 'name', title: '姓名', align:'center'},
                 {field: 'sex_text', title: '性别', align:'center'},
                 {field: 'work_text', title: '工作', align:'center'},
@@ -166,7 +165,7 @@
         })
 
         //列表操作//注：tool 是工具条事件名，userList 是 table 原始容器的属性 lay-filter="对应的值"
-        table.on('tool(userList)', function(obj){
+        table.on('tool(list)', function(obj){
             var layEvent = obj.event,
                 data = obj.data;
             if(layEvent === 'edit'){ //编辑
