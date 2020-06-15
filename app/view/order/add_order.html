@@ -44,8 +44,8 @@
 </div>
 <div class="layui-form-item layui-row layui-col-xs12">
     <label class="layui-form-label">订单来源</label>
-    <div class="layui-input-inline work_id">
-        <select name="work_id" lay-verify="required" lay-search>
+    <div class="layui-input-inline channel_id">
+        <select name="channel_id" lay-verify="required" lay-search>
             <option></option>
             {foreach $channel as $key=>$v }
             <option value="{$key}">{$v}</option>
@@ -80,7 +80,7 @@
 <div class="layui-form-item layui-row layui-form-text layui-col-xs12">
     <label class="layui-form-label">地址</label>
     <div class="layui-input-inline">
-        <textarea placeholder="请输入地址" class="layui-textarea address" name="address"></textarea>
+        <textarea placeholder="请输入地址" class="layui-textarea address" lay-verify="required" name="address"></textarea>
     </div>
 </div>
 <input type="hidden" name="customer_id" class="customer_id" value="">
@@ -102,16 +102,9 @@
         form.on("submit(add)",function(data) {
             $.post('/index.php/order/addOrder', data.field, function (res) {
                 if (res.code > 0) {
-                    layer.msg(res.msg, {icon: 2, time: 500});
+                    layer.msg(res.msg, {icon: 2, time: 1000});
                 } else if(res.code == 0) {
                     layer.msg(res.msg, {time: 500});
-                    setTimeout(function(){
-                        layer.closeAll("iframe");
-                        //刷新父页面
-                        parent.location.reload();
-                    },2000);
-                }else{
-                    layer.msg('保存失败', {icon: 2, time: 500});
                 }
             }, 'json');
             return false;

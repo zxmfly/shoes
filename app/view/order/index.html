@@ -1,41 +1,60 @@
 {extend name="layout/list" /}
-{block name="title"}员工列表{/block}
+{block name="title"}订单列表{/block}
 {block name="header"}
 <blockquote class="layui-elem-quote quoteBox" >
-    <form class="layui-form">
+    <form class="layui-form" lay-filter="search_from">
         <div class="layui-inline">
             <div class="layui-input-inline">
-                <input type="text" class="layui-input searchVal" placeholder="用户名\姓名\工号" />
+                <input type="text" class="layui-input customer_express" placeholder="运单号" />
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input order_id" placeholder="订单号" />
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input date_time" id="orderTime" placeholder="开始时间 - 结束时间">
+            </div>
+            <div class="layui-input-inline $status_arr">
+                <select name="status" class="status" >
+                    <option></option>
+                    {foreach $status_arr as $key=>$v }
+                    <option value="{$key}">{$v}</option>
+                    {/foreach}
+                </select>
             </div>
             <a class="layui-btn search_btn" data-type="reload">搜索</a>
         </div>
         <div class="layui-inline">
-            <a class="layui-btn layui-btn-normal addNews_btn">添加员工</a>
-        </div>
-        <div class="layui-inline">
-            <a class="layui-btn layui-btn-danger layui-btn-normal delAll_btn">批量删除</a>
+            <a class="layui-btn layui-btn-normal addNews_btn">添加</a>
         </div>
     </form>
 </blockquote>
 {/block}
 {block name="table"}
-    <table id="userList" lay-filter="userList"></table>
+<table id="userList" lay-filter="userList"></table>
 <script type="text/javascript">
-    layui.use(['layer','form','table'],function(){
+    layui.use(['layer','form','table','laydate'],function(){
         var form = layui.form,
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery,
-            table = layui.table;
+            table = layui.table,
+            laydate = layui.laydate;
 
         var listId = 'userListTable';//对应列表的唯一ID
+
+        //日期时间选择器
+        laydate.render({
+            elem: '#orderTime'
+            ,type: 'datetime'
+            ,range: true
+        });
 
         //用户列表
         var tableIns = table.render({
             elem: '#userList',
-            url : '/index.php/worker/getList',
+            url : '/index.php/order/index',
             cellMinWidth : 95,
             page : true,
-            height : "full-103",
+            height : "full-125",
             limits : {$page_list},
             limit : {$page_defult},
             id : listId,
@@ -56,13 +75,20 @@
 
         //搜索【此功能需要后台配合，所以暂时没有动态效果演示】
         $(".search_btn").on("click",function(){
-            if($(".searchVal").val() != ''){
+            var customer_express = $(".customer_express").val();
+            var order_id = $(".order_id").val();
+            var date_time = $(".date_time").val();
+            var status =  $(".status option:selected").val();
+            if(customer_express || order_id || date_time || status){
                 table.reload(listId,{
                     page: {
                         curr: 1 //重新从第 1 页开始
                     },
                     where: {
-                        keywords: $(".searchVal").val()  //搜索的关键字
+                        customer_express:customer_express,
+                        status: status,  //搜索的关键字
+                        order_id:order_id,
+                        date_time:date_time
                     }
                 })
             }else{
@@ -75,7 +101,7 @@
             var index = layui.layer.open({
                 title : title,
                 type : 2,
-                content : "/index.php/worker/addWorker",
+                content : "/index.php/order/addOrder",
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     if(edit){
@@ -148,7 +174,7 @@
             }else if(layEvent === 'del'){ //删除
                 layer.confirm('确定删除此用户？',{icon:3, title:'提示信息'},function(index){
                     $.get('/index.php/worker/delWorker',{
-                         id : data.id
+                        id : data.id
                     },function(res){
                         if (res.code > 0) {
                             layer.msg(res.msg, {icon: 2, time: 500});
