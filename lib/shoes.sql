@@ -11,7 +11,7 @@
  Target Server Version : 100410
  File Encoding         : 65001
 
- Date: 16/06/2020 18:37:34
+ Date: 16/06/2020 18:40:08
 */
 
 SET NAMES utf8mb4;
@@ -68,15 +68,9 @@ CREATE TABLE `ch_orders`  (
   `order_id` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '诚和订单号',
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '新增时间',
   `channel_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '来源ID',
-  `task_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '任务ID',
   `status` tinyint(4) UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单状态',
   `finish_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '订单完成时间',
-  `send_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '发货ID',
   `prices` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '最终价格',
-  `operator_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '操作者ID',
-  `operator` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '操作者',
-  `track_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '追踪ID',
-  `check_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '审核ID',
   `repair_order` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '返修对应订单号',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `express`(`customer_express`) USING BTREE,
