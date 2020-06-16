@@ -125,7 +125,7 @@
     function jq_post(data) {
         var ln = window.sessionStorage.getItem("ln");
         if(ln >= 5){
-            layer.msg('点击次数过多，请稍后重试', {icon: 2, time:1000});
+            layer.msg('点击次数过多，请稍后重试', {icon: 2, time:2000});
             setTimeout(function(){
                 ln = 0;
                 window.sessionStorage.setItem("ln", ln);
@@ -138,7 +138,7 @@
                     $('#code').val('');
                     $('#code').focus();
                 }
-                layer.msg(res.msg, {icon: 2, time:1000});
+                layer.msg(res.msg, {icon: 2, time:2000});
                 var captcha = document.getElementById('refresh');
                 captcha.src = '{:captcha_src()}?' + Math.random();
                 ln++;

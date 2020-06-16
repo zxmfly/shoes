@@ -24,7 +24,7 @@
         form.on("submit(addWork)",function(data) {
             $.post('/index.php/worker/addWork', data.field, function (res) {
                 if (res.code > 0) {
-                    layer.msg(res.msg, {icon: 2, time: 500});
+                    layer.msg(res.msg, {icon: 2, time: 2000});
                 } else if(res.code == 0) {
                     layer.msg(res.msg, {time: 500});
                     setTimeout(function(){

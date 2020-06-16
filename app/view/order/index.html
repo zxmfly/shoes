@@ -29,6 +29,14 @@
     </form>
 </blockquote>
 {/block}
+{block name="script_block"}
+<script type="text/html" id="listBar">
+    <a class="layui-btn layui-btn-xs" lay-event="add_task">入库</a>
+    <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="order_track">追踪</a>
+    <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="order_repair">返修</a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+</script>
+{/block}
 {block name="table"}
 <table id="list" lay-filter="list"></table>
 <script type="text/javascript">
@@ -48,7 +56,7 @@
             ,range: true
         });
 
-        //用户列表
+        //列表
         var tableIns = table.render({
             elem: '#list',
             url : '/index.php/order/getList',
@@ -60,19 +68,19 @@
             id : listId,
             //toolbar: 'true', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
             cols : [[
-                {field: 'user_name', title: '用户名', align:"center"},
-                {field: 'number', title: '工号',  align:'center'},
-                {field: 'name', title: '姓名', align:'center'},
-                {field: 'sex_text', title: '性别', align:'center'},
-                {field: 'work_text', title: '工作', align:'center'},
-                {field: 'role_text', title: '权限', align:'center'},
-                {field: 'status_text', title: '状态',  align:'center'},
-                {field: 'create_time', title: '加入时间', align:'center'},
-                {title: '操作', minWidth:175, templet:'#listBar',fixed:"right",align:"center"}
+                {field: 'customer_express', title: '运单号', align:"center", minWidth:200 },
+                {field: 'customer',     title: '客户',    align:"center"},
+                {field: 'order_id',     title: '诚和订单', align:'center', minWidth:200 },
+                {field: 'channel',      title: '渠道',    align:'center'},
+                {field: 'prices',       title: '价格',    align:'center'},
+                {field: 'status_txt',   title: '状态',    align:'center'},
+                {field: 'create_time',  title: '下单时间', align:'center'},
+                {field: 'finish_time',  title: '完成时间', align:'center'},
+                {title: '操作', minWidth:210, templet:'#listBar',fixed:"right",align:"center"}
             ]]
         });
 
-        //搜索【此功能需要后台配合，所以暂时没有动态效果演示】
+        //搜索
         $(".search_btn").on("click",function(){
             var customer_express = $(".customer_express").val();
             var order_id = $(".order_id").val();
@@ -96,7 +104,7 @@
         });
 
         //添加用户
-        function addUser(edit, title){
+        function add(edit, title, order_type){
             var index = layui.layer.open({
                 title : title,
                 type : 2,
@@ -104,16 +112,18 @@
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     if(edit){
-                        body.find(".user_name").val(edit.user_name);
-                        body.find(".number").val(edit.number);  //工号
-                        body.find(".userSex input[value="+edit.sex+"]").prop("checked","checked");  //性别
-                        body.find(".work_id option[value="+edit.work_id+"]").attr("selected",true);
-                        body.find(".role_id option[value="+edit.role_id+"]").attr("selected",true);
-                        body.find(".status option[value="+edit.status+"]").attr("selected",true);
-                        body.find(".real_name").val(edit.name);  //会员等级
-                        body.find(".password_text").text('密码为空则不修改');
-                        body.find(".edit_id").val(edit.id);
-                        body.find(".action").val('edit_user');
+                        var customer = edit.customer_info;
+                        body.find(".order_type option[value="+order_type+"]").attr("selected",true);
+                        body.find(".repair_order_div").show();
+                        body.find(".repair_order").attr("lay-verify","required");
+                        body.find(".repair_order").val(edit.order_id);
+                        body.find(".name").val(customer.name);
+                        body.find(".phone_number").val(customer.phone_number);
+                        body.find(".postal_code").val(customer.postal_code);
+                        body.find(".address").val(customer.address);
+                        body.find(".customer_id").val(customer.id);
+                        var offset = body.find(".customer_keywords").offset();
+                        body.find(".autoMain").css("top",offset.top+53).css("left",offset.left);
                         form.render();
                     }
                     setTimeout(function(){
@@ -132,51 +142,30 @@
             })
         }
         $(".addNews_btn").click(function(){
-            addUser('', '添加员工');
-        })
-
-        //批量删除
-        $(".delAll_btn").click(function(){
-            var checkStatus = table.checkStatus(listId),
-                data = checkStatus.data,
-                id = [];
-            if(data.length > 0) {
-                for (var i in data) {
-                    id.push(data[i].id);
-                }
-                layer.confirm('确定删除选中的用户？', {icon: 3, title: '提示信息'}, function (index) {
-                    $.get("/index.php/worker/delWorker",{
-                        id : id
-                    },function(res){
-                        if (res.code > 0) {
-                            layer.msg(res.msg, {icon: 2, time: 500});
-                        } else {
-                            layer.msg(res.msg, {time: 500});
-                            setTimeout(function(){
-                                tableIns.reload();
-                            },500);
-                            layer.close(index);
-                        }
-                    })
-                })
-            }else{
-                layer.msg("请选择需要删除的用户");
-            }
+            add('', '订单添加', 1);
         })
 
         //列表操作//注：tool 是工具条事件名，userList 是 table 原始容器的属性 lay-filter="对应的值"
         table.on('tool(list)', function(obj){
             var layEvent = obj.event,
                 data = obj.data;
-            if(layEvent === 'edit'){ //编辑
-                addUser(data, '编辑员工');
+            if(layEvent === 'add_task'){ //入库
+                addTask(data, '入库分配');
+            }else if(layEvent === 'add_task'){
+                openTarck(data, '订单追踪');
+            }else if(layEvent === 'order_repair'){
+                if(data.status != 7 || data.status != 9){
+                    layer.msg('订单还没有完成，不能进行返修操作', {icon: 7, time: 2000});
+                    return false;
+                }
+                add(data, '订单返修', 2);
             }else if(layEvent === 'del'){ //删除
-                layer.confirm('确定删除此用户？',{icon:3, title:'提示信息'},function(index){
-                    $.get('/index.php/worker/delWorker',{
+                layer.confirm('确定删除此订单?',{icon:3, title:'提示信息'},function(index){
+                    $.get('/index.php/order/del',{
                         id : data.id
                     },function(res){
                         if (res.code > 0) {
-                            layer.msg(res.msg, {icon: 2, time: 500});
+                            layer.msg(res.msg, {icon: 2, time: 2000});
                         } else {
                             layer.msg(res.msg, {time: 500});
                             setTimeout(function(){

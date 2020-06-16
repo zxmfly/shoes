@@ -54,6 +54,22 @@
     </div>
 </div>
 <div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">订单类型</label>
+    <div class="layui-input-inline order_type">
+        <select name="order_type" class="order_type" id="order_type" lay-filter="order_type" lay-verify="required" lay-search>
+            {foreach $type_arr as $key=>$v }
+            <option value="{$key}">{$v}</option>
+            {/foreach}
+        </select>
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12 repair_order_div" style="display: none;">
+    <label class="layui-form-label" style="color: #FFB800">返修订单号</label>
+    <div class="layui-input-inline">
+        <input type="text" name="repair_order" lay-verify="" placeholder="请输入返修订单号" class="layui-input repair_order" value="">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
     <label class="layui-form-label" style="color:#009688;">搜索客户</label>
     <div class="layui-input-inline">
         <input type="text" name="customer_keywords" placeholder="姓名/手机号后4位" class="layui-input customer_keywords" value="">
@@ -98,7 +114,7 @@
         var form = layui.form,
             layer = parent.layer === undefined ? layui.layer : top.layer,
             $ = layui.jquery;
-
+        var py = 38;
         form.on("submit(add)",function(data) {
             $.post('/index.php/order/addOrder', data.field, function (res) {
                 if (res.code > 0) {
@@ -111,9 +127,25 @@
             return false;
         });
 
+        form.on('select(order_type)', function(data){
+            var type = data.value; //得到被选中的值
+            if(type == 2){
+                $(".repair_order_div").show();
+                $(".repair_order").attr("lay-verify","required");
+                py += 53;
+                $(".autoMain").css("top",offset.top+py).css("left",offset.left);
+            }else{
+                $(".repair_order_div").hide();
+                $(".repair_order").attr("lay-verify","");
+                $(".repair_order").val("");
+                py = 38;
+                $(".autoMain").css("top",offset.top+py).css("left",offset.left);
+            }
+        });
+
         $(".customer_keywords").focus(showItem).keyup(showItem);
         var offset = $(".customer_keywords").offset();
-        $(".autoMain").css("top",offset.top+38).css("left",offset.left);
+        $(".autoMain").css("top",offset.top+py).css("left",offset.left);
         $("#closeList").click(function(){
             $(".customer_keywords").val("");
             $(".autoList>li").remove();
@@ -177,7 +209,7 @@
                 });
             })
         }
-
     });
+
 </Script>
 {/block}
