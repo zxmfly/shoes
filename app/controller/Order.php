@@ -21,7 +21,7 @@ class Order extends BaseAdmin
         $page_defult = $this->_pageDefault;
         $page_list = json_encode($this->_pageArr);
         $data = compact('page_defult','page_list','status_arr');
-        //echo 842.81+815.63+842.81 = 2501.25;
+
         View::assign($data);
         if(empty($param)) return View::fetch();
     }
@@ -171,5 +171,16 @@ class Order extends BaseAdmin
 
     }
 
+    public function orderTrack(){
+        //$order_id = Request::get('oid');
+        if(empty($order_id)){
+            $data = getRs(1,'操作错误');
+        }else{
+
+        }
+        dump($data);
+        View::assign($data);
+        return View::fetch();
+    }
 
 }

@@ -144,6 +144,29 @@
         $(".addNews_btn").click(function(){
             add('', '订单添加', 1);
         })
+        
+        function openTarck(data, title) {
+            var index = layui.layer.open({
+                title : title,
+                type : 2,
+                content : "/index.php/order/orderTrack?oid="+data.order_id,
+                success : function(layero, index){
+                    var body = layui.layer.getChildFrame('body', index);
+                    setTimeout(function(){
+                        layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                            tips: 3,
+                            time: 2000
+                        });
+                    },500)
+                }
+            })
+            layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
+            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+            $(window).on("resize",function(){
+                layui.layer.full(window.sessionStorage.getItem("index"));
+            })
+        }
 
         //列表操作//注：tool 是工具条事件名，userList 是 table 原始容器的属性 lay-filter="对应的值"
         table.on('tool(list)', function(obj){
@@ -151,7 +174,7 @@
                 data = obj.data;
             if(layEvent === 'add_task'){ //入库
                 addTask(data, '入库分配');
-            }else if(layEvent === 'add_task'){
+            }else if(layEvent === 'order_track'){
                 openTarck(data, '订单追踪');
             }else if(layEvent === 'order_repair'){
                 if(data.status != 7 || data.status != 9){

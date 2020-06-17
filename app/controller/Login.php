@@ -17,7 +17,10 @@ use think\facade\View;
 class Login extends BaseController
 {
     public function index(){
-
+        $shoesAdmin = Session::get('shoesAdmin');
+        if(!empty($shoesAdmin)){
+            return redirect('/');
+        }
         return View::fetch('login');
     }
 

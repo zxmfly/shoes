@@ -8,7 +8,7 @@
     <div style="text-align: center; color: gray; font-size: 20px;">
         <h1>欢迎使用后台系统</h1>
         <blockquote class="layui-elem-quote layui-bg-green">
-            <div id="nowTime"></div>
+            <div id="nowTime"> 亲爱的 <span style="color: #01AAED">{$admin}</span> ,<span id="timeType"></span> 欢迎使用诚和鞋业管理系统。当前时间为：<span id="showTime"></span></div>
         </blockquote>
     </div>
 </body>
@@ -34,7 +34,8 @@
         var second = dateObj.getSeconds(); //当前系统时间的秒钟值
         var timeValue = "" +((hour >= 12) ? (hour >= 18) ? "晚上" : "下午" : "上午" ); //当前时间属于上午、晚上还是下午
         newDate = dateFilter(year)+"年"+dateFilter(month)+"月"+dateFilter(date)+"日 "+" "+dateFilter(hour)+":"+dateFilter(minute)+":"+dateFilter(second);
-        document.getElementById("nowTime").innerHTML = "亲爱的 {$admin} ,"+timeValue+"好！ 欢迎使用诚和鞋业管理系统。当前时间为： "+newDate+"　"+week;
+        document.getElementById("timeType").innerHTML = timeValue+'好！';
+        document.getElementById("showTime").innerHTML = newDate+"　"+week;
         setTimeout("getLangDate()",1000);
     }
 </script>
