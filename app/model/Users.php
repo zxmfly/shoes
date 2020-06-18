@@ -12,7 +12,7 @@ use think\Model;
 class Users extends Model
 {
 
-    public static function getAll($where=true, $page, $limit){
+    public static function getAll($where=true, $page = 1, $limit = 20){
         $data['count'] = Users::where($where)->count();
         if (!$data['count']) return ['count'=>0,'data'=>[]];
         $lists = Users::where($where)->page($page, $limit)->select()->toArray();

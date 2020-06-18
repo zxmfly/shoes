@@ -9,6 +9,7 @@ namespace app\controller;
 
 
 use app\model\Track;
+use app\model\Users;
 use think\facade\Db;
 use think\facade\Request;
 use think\facade\View;
@@ -183,10 +184,18 @@ class Order extends BaseAdmin
             $rate = array_search($order['status'], $rate_rr) + 1;
             $rate_value = count($rate_rr);
             $rate_data = compact('rate','rate_value');
+            $track = Track::where(['order_id'=>$order_id])->order('create_time','desc')->select()->toArray();
+            $order_action = getDict('order_action');
+            foreach ($track as &$row){
+                $user_info = Users::getAll(['id'=>$row['operator_id']]);
+                $row['worker_info'] = $user_info['data'][0];
+                $row['order_action'] = $order_action[$row['status']];
+            }
         }
         $data = [
             'order' => $order,
             'rate_data' => $rate_data,
+            'track' => $track,
         ];
         View::assign($data);
         return View::fetch();

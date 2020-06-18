@@ -103,7 +103,7 @@
             }
         });
 
-        //添加用户
+        //添加
         function add(edit, title, order_type){
             var index = layui.layer.open({
                 title : title,
@@ -127,7 +127,7 @@
                         form.render();
                     }
                     setTimeout(function(){
-                        layui.layer.tips('点击此处返回用户列表', '.layui-layer-setwin .layui-layer-close', {
+                        layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
                             tips: 3,
                             time: 2000
                         });
@@ -150,8 +150,7 @@
                 title : title,
                 type : 2,
                 content : "/index.php/order/orderTrack?oid="+data.order_id,
-                success : function(layero, index){
-                    var body = layui.layer.getChildFrame('body', index);
+                success : function(){
                     setTimeout(function(){
                         layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
                             tips: 3,
