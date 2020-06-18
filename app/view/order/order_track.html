@@ -5,13 +5,44 @@
 <fieldset class="layui-elem-field">
     <legend>订单信息</legend>
     <div class="layui-field-box">
-        内容区域
+        <div class="layui-row layui-col-xs12">
+            <label class="layui-form-label">运单号：</label>
+            <p class="layui-input-inline" style="line-height: 20px;padding: 9px 0;">{$order.customer_express}</p>
+        </div>
+        <div class="layui-row layui-col-xs12">
+            <label class="layui-form-label">下单时间：</label>
+            <p class="layui-input-inline" style="line-height: 20px;padding: 9px 0;">{$order.create_time}</p>
+        </div>
+        <div class="layui-row layui-col-xs12">
+            <label class="layui-form-label">客户：</label>
+            <p class="layui-input-inline" style="line-height: 20px;padding: 9px 0;">
+                {$order['customer_info']['name']}
+                {$order['customer_info']['phone_number']}
+                {$order['customer_info']['address']}
+            </p>
+        </div>
+        <div class="layui-row layui-col-xs12">
+            <label class="layui-form-label">订单号：</label>
+            <p class="layui-input-inline" style="line-height: 20px;padding: 9px 0;">{$order.order_id}</p>
+        </div>
+        <div class="layui-row layui-col-xs12">
+            <label class="layui-form-label">状态：</label>
+            <p class="layui-input-inline" style="line-height: 20px;padding: 9px 0;">{$order.status_txt}</p>
+        </div>
+        <div class="layui-row layui-col-xs12" ><label class="layui-form-label">进度：</label>
+            <div style="padding-left:120px; margin-top: 19px; width:50%">
+                <div class="layui-progress" lay-showpercent="true">
+                    <div class="layui-progress-bar layui-bg-orange" lay-percent="{$rate_data.rate} / {$rate_data.rate_value} "></div>
+                </div>
+            </div>
+        </div>
     </div>
 </fieldset>
+
 <fieldset class="layui-elem-field layui-field-title">
     <legend>订单时间线</legend>
     <div class="layui-field-box">
-    <ul class="layui-timeline">
+    <ul class="layui-timeline" style="padding-left:40px; ">
         <li class="layui-timeline-item">
             <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
             <div class="layui-timeline-content layui-text">
@@ -57,13 +88,11 @@
     </div>
 </fieldset>
 <script>
-    layui.use(['layer'],function(){
-        var layer = parent.layer === undefined ? layui.layer : top.layer,
-            $ = layui.jquery;
-            var code = {$code};
-            if(code > 0){
-                layer.msg({$msg}, {icon: 2, time: 2000});
-            }
+    layui.use(['layer','element'],function(){
+        var layer = layui.layer,
+            $ = layui.jquery,
+            element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+
     });
 </Script>
 {/block}

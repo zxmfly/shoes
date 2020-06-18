@@ -70,7 +70,7 @@
 <script>
 layui.use(['form','layer'],function(){
     var form = layui.form,
-    layer = parent.layer === undefined ? layui.layer : top.layer,
+        layer = layui.layer,
     $ = layui.jquery;
 
     form.on("submit(addUser)",function(data) {

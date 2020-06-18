@@ -13,7 +13,7 @@ use think\Model;
 
 class Orders extends Model
 {
-    public static function getAll($where=true, $page, $limit){
+    public static function getAll($where=true, $page = 1, $limit = 20){
         $data['count'] = Orders::where($where)->count();
         if (!$data['count']) return ['count'=>0,'data'=>[]];
         $lists = Orders::where($where)->page($page, $limit)->order('id','desc')->select()->toArray();

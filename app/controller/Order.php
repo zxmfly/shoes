@@ -118,7 +118,7 @@ class Order extends BaseAdmin
             return json(getRs(3,'操作失败:运单号已存在,请勿重新添加'));
         }
         unset($param['customer_keywords'],$param['name'],$param['phone_number'],$param['address'],$param['postal_code']);
-        $param['order_id'] = 'ch'.date('YmdHis').rand(1000, 9999);
+        $param['order_id'] = date('YmdHis').rand(1000, 9999);
         $param['create_time'] = time();
         $result = Orders::insertGetId($param);
         if($result){
@@ -172,13 +172,22 @@ class Order extends BaseAdmin
     }
 
     public function orderTrack(){
-        //$order_id = Request::get('oid');
+        $order_id = Request::get('oid');
         if(empty($order_id)){
             $data = getRs(1,'操作错误');
         }else{
-
+            $list = Orders::getAll(['order_id'=>$order_id]);
+            $order = $list['data'][0];
+            $status = getDict('order_status');
+            $rate_rr = array_keys($status);
+            $rate = array_search($order['status'], $rate_rr) + 1;
+            $rate_value = count($rate_rr);
+            $rate_data = compact('rate','rate_value');
         }
-        dump($data);
+        $data = [
+            'order' => $order,
+            'rate_data' => $rate_data,
+        ];
         View::assign($data);
         return View::fetch();
     }

@@ -112,7 +112,7 @@
 <script>
     layui.use(['form','layer'],function(){
         var form = layui.form,
-            layer = parent.layer === undefined ? layui.layer : top.layer,
+            layer = layui.layer,
             $ = layui.jquery;
         var py = 38;
         form.on("submit(add)",function(data) {
