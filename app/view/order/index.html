@@ -15,7 +15,7 @@
             </div>
             <div class="layui-input-inline $status_arr">
                 <select name="status" class="status" >
-                    <option></option>
+                    <option>全部</option>
                     {foreach $status_arr as $key=>$v }
                     <option value="{$key}">{$v}</option>
                     {/foreach}
@@ -62,7 +62,7 @@
             url : '/index.php/order/getList',
             cellMinWidth : 95,
             page : true,
-            height : "full-103",
+            height : "full-110",
             limits : {$page_list},
             limit : {$page_defult},
             id : listId,
@@ -86,21 +86,17 @@
             var order_id = $(".order_id").val();
             var date_time = $(".date_time").val();
             var status =  $(".status option:selected").val();
-            if(customer_express || order_id || date_time || status){
-                table.reload(listId,{
-                    page: {
-                        curr: 1 //重新从第 1 页开始
-                    },
-                    where: {
-                        customer_express:customer_express,
-                        status: status,  //搜索的关键字
-                        order_id:order_id,
-                        date_time:date_time
-                    }
-                })
-            }else{
-                layer.msg("请输入搜索的内容");
-            }
+            table.reload(listId,{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    customer_express:customer_express,
+                    status: status,  //搜索的关键字
+                    order_id:order_id,
+                    date_time:date_time
+                }
+            })
         });
 
         //添加
