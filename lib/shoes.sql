@@ -146,4 +146,10 @@ CREATE TABLE `ch_work`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
+CREATE TABLE `ch_fix` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='维修类型';
+
 SET FOREIGN_KEY_CHECKS = 1;

@@ -2,6 +2,7 @@
 {block name="title"}订单追踪{/block}
 
 {block name="div_block"}
+{if $code == 0}
 <fieldset class="layui-elem-field">
     <legend>订单信息</legend>
     <div class="layui-field-box">
@@ -65,4 +66,12 @@
 
     });
 </Script>
+{else}
+    <script>
+        layui.use(['layer'],function(){
+            var layer = layui.layer;
+            layer.msg('{$msg}', {icon: 2, time: 2000});
+        });
+    </Script>
+{/if}
 {/block}

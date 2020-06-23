@@ -128,7 +128,7 @@ class Worker extends BaseAdmin
         $data = Request::param();
         if(empty($data)) return View::fetch();
         if($data['id']){
-            $update = Work::updateUsers($data);
+            $update = Work::updateWork($data);
             if($update){
                 $rs = ['code'=>0,'msg'=>'修改成功'];
             }else{

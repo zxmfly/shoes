@@ -1,0 +1,121 @@
+{extend name="layout/list" /}
+{block name="title"}工作分类列表{/block}
+{block name="table"}
+    <table id="fixList" lay-filter="fixList"></table>
+<script type="text/javascript">
+    layui.use(['layer','form','table'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table;
+
+        var listId = 'fixList';//对应列表的唯一ID
+
+        //用户列表
+        var tableIns = table.render({
+            elem: '#fixList',
+            url : '/index.php/task/getFix',
+            cellMinWidth : 95,
+            page : true,
+            height : "full-110",
+            limits : {$page_list},
+            limit : {$page_defult},
+            id : listId,
+            //toolbar: 'true', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+            cols : [[
+                {type: "checkbox", fixed:"left", width:50},
+                {field: 'id', title: 'ID', minWidth:100, align:"center"},
+                {field: 'name', title: '维修名称', minWidth:200, align:'center'},
+                {title: '操作', minWidth:175, templet:'#listBar',fixed:"right",align:"center"}
+            ]]
+        });
+
+        //添加工作
+        function add(edit){
+            var index = layui.layer.open({
+                title : "添加",
+                type : 2,
+                content : "/index.php/task/addFix",
+                success : function(layero, index){
+                    var body = layui.layer.getChildFrame('body', index);
+                    if(edit){
+                        body.find(".fix_id_text").text(edit.id);
+                        body.find(".fix_id").val(edit.id);  //工号
+                        body.find(".fix_name").val(edit.name);  //工号
+                        form.render();
+                    }
+                    setTimeout(function(){
+                        layui.layer.tips('点击此处返回用户列表', '.layui-layer-setwin .layui-layer-close', {
+                            tips: 3,
+                            time: 2000
+                        });
+                    },500)
+                }
+            })
+            layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
+            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+            $(window).on("resize",function(){
+                layui.layer.full(window.sessionStorage.getItem("index"));
+            })
+        }
+        $(".addNews_btn").click(function(){
+            add();
+        })
+
+        //批量删除
+        $(".delAll_btn").click(function(){
+            var checkStatus = table.checkStatus(listId),
+                data = checkStatus.data,
+                id = [];
+            if(data.length > 0) {
+                for (var i in data) {
+                    id.push(data[i].id);
+                }
+                layer.confirm('确定删除选中的维修类别？', {icon: 3, title: '提示信息'}, function (index) {
+                    $.get("/index.php/worker/delWork",{
+                        id : id
+                    },function(res){
+                        if (res.code > 0) {
+                            layer.msg(res.msg, {icon: 2, time: 2000});
+                        } else {
+                            layer.msg(res.msg, {time: 500});
+                            setTimeout(function(){
+                                tableIns.reload();
+                            },500);
+                            layer.close(index);
+                        }
+                    })
+                })
+            }else{
+                layer.msg("请选择需要删除的工作类别");
+            }
+        })
+
+        //列表操作//注：tool 是工具条事件名，userList 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('tool('+listId+')', function(obj){
+            var layEvent = obj.event,
+                data = obj.data;
+            if(layEvent === 'edit'){ //编辑
+                add(data);
+            }else if(layEvent === 'del'){ //删除
+                layer.confirm('确定删除维修类别？',{icon:3, title:'提示信息'},function(index){
+                    $.get('/index.php/task/delFix',{
+                        id : data.id
+                    },function(res){
+                        if (res.code > 0) {
+                            layer.msg(res.msg, {icon: 2, time: 2000});
+                        } else {
+                            layer.msg(res.msg, {time: 500});
+                            setTimeout(function(){
+                                tableIns.reload();
+                            },500);
+                            layer.close(index);
+                        }
+                    })
+                });
+            }
+        });
+    });
+</script>
+{/block}

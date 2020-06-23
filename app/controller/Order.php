@@ -168,14 +168,10 @@ class Order extends BaseAdmin
         return json($rs);
     }
 
-    public function addTask(){
-
-    }
-
     public function orderTrack(){
         $order_id = Request::get('oid');
         if(empty($order_id)){
-            $data = getRs(1,'操作错误');
+            $data = getRs(1,'操作错误,缺少必要的参数');
         }else{
             $list = Orders::getAll(['order_id'=>$order_id]);
             $order = $list['data'][0];
@@ -191,12 +187,15 @@ class Order extends BaseAdmin
                 $row['worker_info'] = $user_info['data'][0];
                 $row['order_action'] = $order_action[$row['status']];
             }
+            $data = [
+                'code' => 0,
+                'msg'  => 'ok',
+                'order' => $order,
+                'rate_data' => $rate_data,
+                'track' => $track,
+            ];
         }
-        $data = [
-            'order' => $order,
-            'rate_data' => $rate_data,
-            'track' => $track,
-        ];
+
         View::assign($data);
         return View::fetch();
     }
