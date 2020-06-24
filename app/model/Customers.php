@@ -1,8 +1,8 @@
 <?php
 /**
  * User: zengxianmao
- * Date: 2020/6/16
- * Time: 15:47
+ * Date: 2020/6/24
+ * Time: 17:38
  */
 
 namespace app\model;
@@ -10,7 +10,7 @@ namespace app\model;
 
 use think\Model;
 
-class Track extends Model
+class Customers extends Model
 {
 
 }

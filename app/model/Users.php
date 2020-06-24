@@ -17,9 +17,11 @@ class Users extends Model
         if (!$data['count']) return ['count'=>0,'data'=>[]];
         $lists = Users::where($where)->page($page, $limit)->select()->toArray();
         $dict = getDict();
+        $work = Works::select()->toArray();
+        $workArr = getByIndex($work, 'id', 'work');
         foreach ($lists as &$row){
             $row['sex_text'] = $dict['sex'][$row['sex']];
-            $row['work_text'] = $dict['work'][$row['work_id']];
+            $row['work_text'] = $workArr[$row['work_id']];
             $row['role_text'] = $dict['role'][$row['role_id']];
             $row['status_text'] = $dict['status'][$row['status']];
         }

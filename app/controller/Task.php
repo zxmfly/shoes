@@ -8,7 +8,7 @@
 namespace app\controller;
 
 
-use app\model\Fix;
+use app\model\Fixs;
 use think\facade\Request;
 use think\facade\View;
 
@@ -19,7 +19,11 @@ class Task extends BaseAdmin
     }
 
     public function add(){
-        echo "添加任务";
+        if(Request::method() == 'GET' && Request::param('oid')){
+            $data = ['order_id'=> Request::param('oid'),'repair_order'=>Request::param('rep_oid')];
+            View::assign($data);
+        }
+        return View::fetch();
     }
 
     public function fix(){
@@ -34,7 +38,7 @@ class Task extends BaseAdmin
         $param = Request::param();
         $page = isset($param['page']) ? $param['page'] : 1;
         $limit = isset($param['limit']) ? $param['limit'] : 20;
-        $all = Fix::getAll(true, $page, $limit);
+        $all = Fixs::getAll(true, $page, $limit);
         $count = $all['count'];
         $data = $all['data'];
         $code = 0;
@@ -49,7 +53,7 @@ class Task extends BaseAdmin
         if(empty($data)) return View::fetch();
 
         if($data['id']){
-            $update = Fix::updateFix($data);
+            $update = Fixs::updateFix($data);
             if($update){
                 $rs = ['code'=>0,'msg'=>'修改成功'];
             }else{
@@ -57,11 +61,11 @@ class Task extends BaseAdmin
             }
             return json($rs);
         }else{
-            $work = Fix::where('name', $data['name'])->find();
+            $work = Fixs::where('name', $data['name'])->find();
             if($work){
                 return json(['code'=>2,'msg'=>'该维修类别已存在,请勿重复添加']);
             }
-            $insert = Fix::insert($data);
+            $insert = Fixs::insert($data);
             $res = $insert ? ['code'=>0,'msg'=>'添加成功'] : ['code'=>1,'msg'=>'添加失败'];
             return json($res);
         }
@@ -70,7 +74,7 @@ class Task extends BaseAdmin
     public function delFix(){
         if(Request::param('id')) {
             $id = Request::param('id');
-            $delete = Fix::destroy($id);
+            $delete = Fixs::destroy($id);
             if($delete){
                 $rs = ['code'=>0,'msg'=>'删除成功'];
             }else{

@@ -31,9 +31,13 @@
 {/block}
 {block name="script_block"}
 <script type="text/html" id="listBar">
+    {{#  if(d.task_id === ''){ }}
     <a class="layui-btn layui-btn-xs" lay-event="add_task">入库</a>
+    {{#  } }}
     <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="order_track">追踪</a>
+    {{#  if(d.status === 7 || d.status === 9){ }}
     <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="order_repair">返修</a>
+    {{#  } }}
     <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
 </script>
 {/block}
@@ -60,7 +64,7 @@
         var tableIns = table.render({
             elem: '#list',
             url : '/index.php/order/getList',
-            cellMinWidth : 95,
+            cellMinWidth : 100,
             page : true,
             height : "full-110",
             limits : {$page_list},
@@ -68,15 +72,18 @@
             id : listId,
             //toolbar: 'true', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
             cols : [[
-                {field: 'customer_express', title: '运单号', align:"center", minWidth:200 },
-                {field: 'customer',     title: '客户',    align:"center"},
-                {field: 'order_id',     title: '诚和订单', align:'center', minWidth:200 },
-                {field: 'channel',      title: '渠道',    align:'center'},
-                {field: 'prices',       title: '价格',    align:'center'},
-                {field: 'status_txt',   title: '状态',    align:'center'},
-                {field: 'create_time',  title: '下单时间', align:'center'},
-                {field: 'finish_time',  title: '完成时间', align:'center'},
-                {title: '操作', minWidth:210, templet:'#listBar',fixed:"right",align:"center"}
+                {field: 'customer_express', title: '运单号', minWidth:170},
+                {field: 'customer',     title: '客户', width:75},
+                {field: 'order_id',     title: '诚和订单', minWidth:170},
+                {field: 'channel',      title: '渠道', width:60},
+                {field: 'prices',       title: '价格', width:60},
+                {field: 'status_txt',   title: '状态', width:80},
+                {field: 'order_desc',   title: '描述', },
+                {field: 'order_type',   title: '类型', width:60, templet: '#orderType'},
+                {field: 'repair_order', title: '返修订单',},
+                {field: 'create_time',  title: '下单时间',},
+                {field: 'finish_time',  title: '完成时间',},
+                {title: '操作', minWidth:150, templet:'#listBar',fixed:"right"}
             ]]
         });
 
@@ -167,7 +174,7 @@
             var index = layui.layer.open({
                 title : title,
                 type : 2,
-                content : "/index.php/task/add?oid="+data.order_id,
+                content : "/index.php/task/add?oid="+data.order_id+"&rep_oid="+data.repair_order,
                 success : function(){
                     setTimeout(function(){
                         layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
@@ -190,6 +197,10 @@
             var layEvent = obj.event,
                 data = obj.data;
             if(layEvent === 'add_task'){ //入库
+                if(data.task_id){
+                    layer.msg('订单已入库，不要重复入库哟', {icon: 7, time: 2000});
+                    return false;
+                }
                 addTask(data, '入库分配');
             }else if(layEvent === 'order_track'){
                 openTarck(data, '订单追踪');
@@ -218,5 +229,12 @@
             }
         });
     });
+</script>
+<script type="text/html" id="orderType">
+    {{#  if(d.order_type === '返修'){ }}
+    <span style="color: #FFB800;">{{ d.order_type }}</span>
+    {{#  } else { }}
+    {{ d.order_type }}
+    {{#  } }}
 </script>
 {/block}

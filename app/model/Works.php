@@ -11,16 +11,16 @@ namespace app\model;
 
 use think\Model;
 
-class Fix extends Model
+class Works extends Model
 {
     public static function getAll($where=true, $page, $limit){
-        $data['count'] = Fix::where($where)->count();
+        $data['count'] = Works::where($where)->count();
         if (!$data['count']) return ['count'=>0,'data'=>[]];
-        $data['data'] = Fix::where($where)->page($page, $limit)->select()->toArray();
+        $data['data'] = Works::where($where)->page($page, $limit)->select()->toArray();
         return $data;
     }
 
-    public static function updateFix($all){
-        return Fix::where('id',$all['id'])->update($all);
+    public static function updateWork($all){
+        return Works::where('id',$all['id'])->update($all);
     }
 }

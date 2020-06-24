@@ -8,8 +8,7 @@
 namespace app\controller;
 
 
-use app\model\User;
-use app\model\Work;
+use app\model\Works;
 use think\facade\Request;
 use think\facade\View;
 use app\model\Users;
@@ -114,7 +113,7 @@ class Worker extends BaseAdmin
         $param = Request::param();
         $page = isset($param['page']) ? $param['page'] : 1;
         $limit = isset($param['limit']) ? $param['limit'] : 20;
-        $all = Work::getAll(true, $page, $limit);
+        $all = Works::getAll(true, $page, $limit);
         $count = $all['count'];
         $data = $all['data'];
         $code = 0;
@@ -128,7 +127,7 @@ class Worker extends BaseAdmin
         $data = Request::param();
         if(empty($data)) return View::fetch();
         if($data['id']){
-            $update = Work::updateWork($data);
+            $update = Works::updateWork($data);
             if($update){
                 $rs = ['code'=>0,'msg'=>'修改成功'];
             }else{
@@ -136,11 +135,11 @@ class Worker extends BaseAdmin
             }
             return json($rs);
         }else{
-            $work = Work::where('work', $data['work'])->find();
+            $work = Works::where('work', $data['work'])->find();
             if($work){
                 return json(['code'=>2,'msg'=>'该工作类别已存在,请勿重复添加']);
             }
-            $insert = Work::insert($data);
+            $insert = Works::insert($data);
             $res = $insert ? ['code'=>0,'msg'=>'添加成功'] : ['code'=>1,'msg'=>'添加失败'];
             return json($res);
         }
@@ -149,7 +148,7 @@ class Worker extends BaseAdmin
     public function delWork(){
         if(Request::param('id')) {
             $id = Request::param('id');
-            $delete = Work::destroy($id);
+            $delete = Works::destroy($id);
             if($delete){
                 $rs = ['code'=>0,'msg'=>'删除成功'];
             }else{

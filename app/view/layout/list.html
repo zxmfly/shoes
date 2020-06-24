@@ -10,7 +10,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     {include file="layout/static"}
-    {block name="static"}{/block}
+    {block name="static"}
+        <style>
+            .layui-table-cell {padding: 0 5px!important; text-align: center;}
+        </style>
+    {/block}
     <link rel="stylesheet" href="/static/css/public.css" media="all" />
 </head>
 <body class="childrenBody">

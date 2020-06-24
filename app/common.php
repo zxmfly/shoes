@@ -14,12 +14,6 @@ if(!function_exists('getDict')) {
                 1 => '男',
                 2 => '女'
             ],
-            'work' => [
-                1 => '客服',
-                2 => '财务',
-                3 => '师傅',
-                4 => '学徒',
-            ],
             'role' => [
                 1 => '普通员工',
                 2 => '系统管理员'
@@ -45,8 +39,8 @@ if(!function_exists('getDict')) {
                 0 => '添加到管理系统',
                 1 => '入库分配',
                 2 => '仓库派单',
-                3 => '已修复',
-                4 => '已审核',
+                3 => '维修完成',
+                4 => '审核通过',
                 5 => '审核失败',
                 6 => '打包寄出',
                 7 => '订单完成',
@@ -76,5 +70,19 @@ if(!function_exists('getDateTime')) {
         $end_time = strtotime($date_arr[1]);
 
         return compact('start_time', 'end_time');
+    }
+}
+
+if(!function_exists('getByIndex')){
+    function getByIndex($lists, $index, $key = '') : array
+    {
+        if(!$lists){
+            return [];
+        }
+        $results = [];
+        foreach ($lists as $value) {
+            $results[$value[$index]] = $key ? $value[$key] : $value;
+        }
+        return $results;
     }
 }

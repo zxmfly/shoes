@@ -8,7 +8,8 @@
 namespace app\controller;
 
 
-use app\model\Track;
+use app\model\Customers;
+use app\model\Tracks;
 use app\model\Users;
 use think\facade\Db;
 use think\facade\Request;
@@ -61,7 +62,7 @@ class Order extends BaseAdmin
         $where = [];
         if($keywords){
             $where[] = is_numeric($keywords) ? ['phone_number', 'like',"%{$keywords}"] : ['name', 'like', "%{$keywords}%"];
-            $customer = Db::name('customer')->where($where)->select()->toArray();
+            $customer = Customers::where($where)->select()->toArray();
             $data = [];
             if($customer){
                 foreach ($customer as $row){
@@ -111,7 +112,7 @@ class Order extends BaseAdmin
                 'phone_number' => $param['phone_number'],
                 'address'   => $param['address'],
                 ];
-            $customer_id = Db::name('customer')->insertGetId($customer);
+            $customer_id = Customers::insertGetId($customer);
             $param['customer_id'] = $customer_id;
         }
         $order_info = Orders::getOne(['customer_express' => $param['customer_express']]);
@@ -132,7 +133,7 @@ class Order extends BaseAdmin
                 'operator_id' => $admin['id'],
                 'operator'  => $admin['name'],
             ];
-            $r = Track::insert($track);
+            $r = Tracks::insert($track);
             if(!$r){
                 Orders::destroy($result);
                 $rs = getRs(4,'新增失败:订单追踪记录失败');
@@ -145,7 +146,7 @@ class Order extends BaseAdmin
                     'operator_id' => $admin['id'],
                     'operator'  => $admin['name'],
                 ];
-                Track::insert($track);
+                Tracks::insert($track);
             }
         }else{
             $rs = getRs(2,'新增失败');
@@ -180,7 +181,7 @@ class Order extends BaseAdmin
             $rate = array_search($order['status'], $rate_rr) + 1;
             $rate_value = count($rate_rr);
             $rate_data = compact('rate','rate_value');
-            $track = Track::where(['order_id'=>$order_id])->order('create_time','desc')->select()->toArray();
+            $track = Tracks::where(['order_id'=>$order_id])->order('create_time','desc')->select()->toArray();
             $order_action = getDict('order_action');
             foreach ($track as &$row){
                 $user_info = Users::getAll(['id'=>$row['operator_id']]);
