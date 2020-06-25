@@ -90,10 +90,10 @@ class Order extends BaseAdmin
         if(empty($param['customer_express']) || empty($param['channel_id'])){
             return json(getRs(1,'缺少必要的参数'));
         }
-        if($param['type'] == 2 && empty($param['repair_order'])){
+        if($param['order_type'] == 2 && empty($param['repair_order'])){
             return json(getRs(1,'缺少返修订单号'));
         }
-        if($param['type'] == 2 && $param['repair_order']){
+        if($param['order_type'] == 2 && $param['repair_order']){
             $order_info = $order_info = Orders::getOne(['order_id' => $param['repair_order']]);
             if(empty($order_info)){
                 return json(getRs(4,'添加返修订单失败:返修订单不存在'));
@@ -102,7 +102,7 @@ class Order extends BaseAdmin
             }
             //$customer_id = $order_info['customer_id'];
         }
-        unset($param['type']);
+        unset($param['order_type']);
         if(empty($customer_id)){//新增客户信息
             if(empty($param['name']) || empty($param['phone_number']) || empty($param['address'])){
                 return json(getRs(1, '客户信息不全'));
@@ -121,32 +121,20 @@ class Order extends BaseAdmin
         }
         unset($param['customer_keywords'],$param['name'],$param['phone_number'],$param['address'],$param['postal_code']);
         $param['order_id'] = date('YmdHis').rand(1000, 9999);
-        $param['create_time'] = time();
+        if($param['repair_order']){
+            $param['status'] = $param['repair_order'] ? 10 : 0;
+        }
         $result = Orders::insertGetId($param);
         if($result){
-            $admin = $this->_admin;
-            //新增追踪
-            $track = [
-                'order_id'  => $param['order_id'],
-                'status'    => 0,
-                'create_time' => $param['create_time'],
-                'operator_id' => $admin['id'],
-                'operator'  => $admin['name'],
-            ];
-            $r = Tracks::insert($track);
-            if(!$r){
+            if(!$this->addTrack($param)){
                 Orders::destroy($result);
                 $rs = getRs(4,'新增失败:订单追踪记录失败');
-            }
-            if($param['repair_order']){//返修追踪
-                $track = [
-                    'order_id'  => $param['repair_order'],
-                    'status'    => 7,
-                    'create_time' => $param['create_time'],
-                    'operator_id' => $admin['id'],
-                    'operator'  => $admin['name'],
-                ];
-                Tracks::insert($track);
+            } else {
+                if ($param['repair_order']) {//返修追踪
+                    $param['order_id'] = $param['repair_order'];
+                    $this->addTrack($param);
+                }
+                $rs = getRs(0, '新增成功');
             }
         }else{
             $rs = getRs(2,'新增失败');

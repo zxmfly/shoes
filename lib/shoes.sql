@@ -96,6 +96,7 @@ CREATE TABLE `ch_orders`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `express`(`customer_express`) USING BTREE,
   UNIQUE INDEX `order_id`(`order_id`) USING BTREE,
+  INDEX `rep_oid` (`repair_order`) USING BTREE,
   INDEX `ct`(`create_time`) USING BTREE,
   INDEX `ft`(`finish_time`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单列表' ROW_FORMAT = Dynamic;
@@ -106,7 +107,7 @@ CREATE TABLE `ch_orders`  (
 DROP TABLE IF EXISTS `ch_tasks`;
 CREATE TABLE `ch_tasks` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '订单id',
+  `order_id` varchar(50) NOT NULL DEFAULT '0' COMMENT '订单id',
   `type` tinyint(255) unsigned NOT NULL DEFAULT 1 COMMENT '任务类型(1维修，2返修)',
   `fix_type` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '修理类型',
   `task_explain` varchar(255) NOT NULL DEFAULT '' COMMENT '任务说明',
@@ -117,8 +118,10 @@ CREATE TABLE `ch_tasks` (
   `status` tinyint(4) unsigned NOT NULL COMMENT '任务状态',
   `prices` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '最终价格',
   `finish_time` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '完成时间',
+  `repair_order` varchar(50) DEFAULT '' COMMENT '返修订单',
   PRIMARY KEY (`id`),
   KEY `oid` (`order_id`),
+  KEY `rep_oid` (`repair_order`),
   KEY `ct` (`create_time`),
   KEY `ft` (`finish_time`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

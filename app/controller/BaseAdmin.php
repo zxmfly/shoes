@@ -10,6 +10,7 @@ namespace app\controller;
 
 
 use app\BaseController;
+use app\model\Tracks;
 use app\model\Users;
 use think\App;
 use think\facade\Session;
@@ -34,7 +35,19 @@ class BaseAdmin extends BaseController
             $this->_admin = Users::where('user_name', $this->shoesAdmin)->find();
 
     }
-
+    //订单追踪
+    public function addTrack($param){
+        $admin = $this->_admin;
+        $track = [
+            'order_id'  => $param['order_id'],
+            'status'    => $param['status'],
+            'create_time' => isset($param['create_time']) ? $param['create_time'] : time(),
+            'operator_id' => $admin['id'],
+            'operator'  => $admin['name'],
+        ];
+        $rs = Tracks::insert($track);
+        return $rs;
+    }
 
     public function loginOut(){
         Session::clear();

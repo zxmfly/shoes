@@ -1,0 +1,169 @@
+{extend name="layout/list" /}
+{block name="title"}任务列表{/block}
+{block name="script_block"}
+<script type="text/html" id="listBar">
+    <a class="layui-btn layui-btn-xs" lay-event="assign_task">已派单</a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+</script>
+{/block}
+{block name="header"}
+<blockquote class="layui-elem-quote quoteBox" >
+    <form class="layui-form" lay-filter="search_from">
+        <div class="layui-inline">
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input order_id" placeholder="订单号" />
+            </div>
+            <div class="layui-input-inline $status_arr">
+                <select name="status" class="status" >
+                    <option>全部</option>
+                    {foreach $status_arr as $key=>$v }
+                    <option value="{$key}">{$v}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <a class="layui-btn search_btn" data-type="reload">搜索</a>
+        </div>
+    </form>
+</blockquote>
+{/block}
+{block name="table"}
+<table id="list" lay-filter="list"></table>
+<script type="text/html" id="switchTpl">
+    <input {{ d.user_name != d.admin ? 'disabled' : '' }} type="checkbox" name="is_ok" value="{{d.is_ok}}" lay-skin="switch" lay-text="是|否" lay-filter="is_ok" {{ d.is_ok == 1 ? 'checked' : '' }}>
+</script>
+<script type="text/javascript">
+    layui.use(['layer','form','table','laydate'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            laydate = layui.laydate;
+
+        var listId = 'taskList';//对应列表的唯一ID
+
+        //列表
+        var tableIns = table.render({
+            elem: '#list',
+            url : '/index.php/task/getList',
+            cellMinWidth : 100,
+            page : true,
+            height : "full-110",
+            limits : {$page_list},
+            limit : {$page_defult},
+            id : listId,
+            //toolbar: 'true', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+            cols : [[
+                {field: 'order_id', title: '诚和订单', minWidth:170},
+                {field: 'fix',      title: '维修类型', minWidth:80},
+                {field: 'task_explain', title: '任务说明'},
+                {field: 'status_txt',   title: '状态', width:80},
+                {field: 'assess_prices',title: '估价', width:60},
+                {field: 'prices',       title: '定价', width:60},
+                {field: 'user_name',    title: '维修员', width:80},
+                {field: 'repair_order', title: '返修订单',},
+                {field: 'create_time',  title: '入库时间',},
+                {field: 'finish_time',  title: '完成时间',},
+                {field: 'is_ok',        title:'已修复', templet: '#switchTpl', minWidth:60, unresize: true},
+                {title: '操作', minWidth:50, templet:'#listBar',fixed:"right"}
+            ]]
+        });
+
+        //搜索
+        $(".search_btn").on("click",function(){
+            var order_id = $(".order_id").val();
+            var status =  $(".status option:selected").val();
+            table.reload(listId,{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    status: status,  //搜索的关键字
+                    order_id:order_id
+                }
+            })
+        });
+
+        //添加
+        function edit(edit, title){
+            var index = layui.layer.open({
+                title : title,
+                type : 2,
+                content : "/index.php/task/add",
+                success : function(layero, index){
+                    var body = layui.layer.getChildFrame('body', index);
+                    if(edit){
+                        body.find(".order_type option[value="+order_type+"]").attr("selected",true);
+                        body.find(".repair_order_div").show();
+                        body.find(".repair_order").attr("lay-verify","required");
+                        body.find(".repair_order").val(edit.order_id);
+                        body.find(".name").val(customer.name);
+                        body.find(".phone_number").val(customer.phone_number);
+                        body.find(".postal_code").val(customer.postal_code);
+                        body.find(".address").val(customer.address);
+                        body.find(".customer_id").val(customer.id);
+                        var offset = body.find(".customer_keywords").offset();
+                        body.find(".autoMain").css("top",offset.top+53).css("left",offset.left);
+                        form.render();
+                    }
+                    setTimeout(function(){
+                        layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                            tips: 3,
+                            time: 2000
+                        });
+                    },500)
+                }
+            })
+            layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
+            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+            $(window).on("resize",function(){
+                layui.layer.full(window.sessionStorage.getItem("index"));
+            })
+        }
+
+        //列表操作//注：tool 是工具条事件名，userList 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('tool(list)', function(obj){
+            var layEvent = obj.event,
+                data = obj.data;
+            if(layEvent === 'assign_task'){ //已派单
+                if(data.status >= 2){
+                    layer.msg('已派过单啦，不要重复操作哟', {icon: 7, time: 2000});
+                    return false;
+                }
+                layer.confirm('确定已将任务派送至维修员处?',{icon:3, title:'提示信息'},function(index){
+                    $.get('/index.php/task/assignTask',{
+                        id : data.id,
+                        order_id : data.order_id
+                    },function(res){
+                        if (res.code > 0) {
+                            layer.msg(res.msg, {icon: 2, time: 2000});
+                        } else {
+                            layer.msg(res.msg, {time: 500});
+                            setTimeout(function(){
+                                tableIns.reload();
+                            },500);
+                            layer.close(index);
+                        }
+                    })
+                });
+            }else if(layEvent === 'del'){ //删除
+                layer.confirm('确定删除此订单?',{icon:3, title:'提示信息'},function(index){
+                    $.get('/index.php/task/del',{
+                        id : data.id
+                    },function(res){
+                        if (res.code > 0) {
+                            layer.msg(res.msg, {icon: 2, time: 2000});
+                        } else {
+                            layer.msg(res.msg, {time: 500});
+                            setTimeout(function(){
+                                tableIns.reload();
+                            },500);
+                            layer.close(index);
+                        }
+                    })
+                });
+            }
+        });
+    });
+</script>
+{/block}

@@ -1,16 +1,62 @@
 {extend name="layout/add" /}
 {block name="title"}入库分配{/block}
 {block name="form_block"}
+<input type="hidden" name="task_id" class="task_id" value="0">
 <div class="layui-form-item layui-row layui-col-xs12">
-    <label class="layui-form-label">ID</label>
+    <label class="layui-form-label">订单ID</label>
     <div class="layui-input-inline">
-        <input type="text" name="order_id" class="layui-input order_id" value="{$order_id}">
+        <input type="text" name="order_id" lay-verify="required" class="layui-input order_id" value="{$order_id}" {if $order_id} readonly="true" {/if}>
     </div>
 </div>
 <div class="layui-form-item layui-row layui-col-xs12">
-    <label class="layui-form-label">名称</label>
+    <label class="layui-form-label">任务类型</label>
+    <div class="layui-input-inline type">
+        <select name="type" class="type" id="type" lay-filter="type" lay-verify="required" lay-search>
+            {foreach $type_arr as $key=>$v }
+            <option value="{$key}">{$v}</option>
+            {/foreach}
+        </select>
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12 repair_order_div" style="display: none;">
+    <label class="layui-form-label" style="color: #FFB800">返修订单号</label>
     <div class="layui-input-inline">
-        <input type="text" name="name" class="layui-input fix_name" lay-verify="required" placeholder="请输入维修名称">
+        <input type="text" name="repair_order" lay-verify="" placeholder="请输入返修订单号" class="layui-input repair_order" value="">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">维修类型</label>
+    <div class="layui-input-inline fix_type">
+        <select name="fix_type" class="fix_type" id="fix_type" lay-filter="fix_type" lay-verify="required" lay-search>
+            <option></option>
+            {foreach $fix as $key=>$v }
+            <option value="{$v.id}">{$v.name}</option>
+            {/foreach}
+        </select>
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">任务说明</label>
+    <div class="layui-input-inline order_desc">
+        <textarea placeholder="说明尽量简洁明了" class="layui-textarea task_explain" lay-verify="required" name="task_explain"></textarea>
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">估价</label>
+    <div class="layui-input-inline">
+        <input type="text" name="assess_prices" lay-verify="required|number" class="layui-input assess_prices"
+               {if $repair_order} value="0" readonly="true"{/if}>
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">选择师傅</label>
+    <div class="layui-input-inline uid">
+        <select name="user" class="user" id="user" lay-filter="user" lay-verify="required" lay-search>
+            <option></option>
+            {foreach $users as $key=>$v }
+            <option value="{$v.id}|{$v.name}">{$v.name} ({$v.task_on})</option>
+            {/foreach}
+        </select>
     </div>
 </div>
 <script>
@@ -18,6 +64,18 @@
         var form = layui.form,
             layer = layui.layer,
             $ = layui.jquery;
+
+        form.on('select(type)', function(data){
+            var type = data.value; //得到被选中的值
+            if(type == 2){
+                $(".repair_order_div").show();
+                $(".repair_order").attr("lay-verify","required");
+            }else{
+                $(".repair_order_div").hide();
+                $(".repair_order").attr("lay-verify","");
+                $(".repair_order").val("");
+            }
+        });
 
         form.on("submit(add)",function(data) {
             $.post('/index.php/task/add', data.field, function (res) {

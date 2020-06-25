@@ -29,6 +29,16 @@ class Users extends Model
         return $data;
     }
 
+    public static function getTaskAll(){
+        $users = Users::where(['work_id'=>1])->select()->toArray();
+        if($users){
+            foreach ($users as &$row){
+                $row['task_on'] = Tasks::where(['uid'=>$row['id']])->where('status','not in', [7,9])->count();
+            }
+        }
+        return $users ? $users : [];
+    }
+
     public static function updateUsers($all){
         return Users::where('id',$all['id'])->update($all);
     }

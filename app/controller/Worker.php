@@ -48,8 +48,12 @@ class Worker extends BaseAdmin
 
     public function addWorker(){
         $data = Request::param();
-        if(empty($data)) return View::fetch();
-
+        if(empty($data)){
+            $work = Works::select()->toArray();
+            $data = compact('work');
+            View::assign($data);
+            return View::fetch();
+        }
         $action = $data['action'];
         $edit_id = $data['edit_id'];
         unset($data['edit_id'],$data['action']);
