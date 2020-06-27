@@ -97,7 +97,7 @@ class Order extends BaseAdmin
             $order_info = $order_info = Orders::getOne(['order_id' => $param['repair_order']]);
             if(empty($order_info)){
                 return json(getRs(4,'添加返修订单失败:返修订单不存在'));
-            }elseif ($order_info['status'] != 7 || $order_info['status'] != 9){
+            }elseif ($order_info['status'] != 7){
                 return json(getRs(3,'添加返修订单失败:返修订单还没有完成维修'));
             }
             //$customer_id = $order_info['customer_id'];
@@ -121,9 +121,7 @@ class Order extends BaseAdmin
         }
         unset($param['customer_keywords'],$param['name'],$param['phone_number'],$param['address'],$param['postal_code']);
         $param['order_id'] = date('YmdHis').rand(1000, 9999);
-        if($param['repair_order']){
-            $param['status'] = $param['repair_order'] ? 10 : 0;
-        }
+        $param['status'] = 0;
         $result = Orders::insertGetId($param);
         if($result){
             if(!$this->addTrack($param)){

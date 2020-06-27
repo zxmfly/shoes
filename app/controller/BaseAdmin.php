@@ -30,9 +30,11 @@ class BaseAdmin extends BaseController
             header('location:/login');
             exit;
         }
-
-        if(empty($this->_admin))
-            $this->_admin = Users::where('user_name', $this->shoesAdmin)->find();
+        $this->_admin = Session::get('adminInfo');
+        if(empty($this->_admin)) {
+            $admin = Users::where('user_name', $this->shoesAdmin)->find();
+            Session::set('adminInfo', $admin);
+        }
 
     }
     //订单追踪

@@ -1,0 +1,47 @@
+{extend name="layout/add" /}
+{block name="title"}任务完成{/block}
+{block name="form_block"}
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">订单ID</label>
+    <div class="layui-input-inline">
+        <input type="text" name="order_id" lay-verify="required" class="layui-input order_id" value="{$order_id}" readonly="true">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">估价</label>
+    <div class="layui-input-inline">
+        <input type="text" name="assess_prices" lay-verify="" class="layui-input"   value="{$assess_prices}" readonly="true">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">最终定价</label>
+    <div class="layui-input-inline">
+        <input type="text" name="prices" lay-verify="required|number" class="layui-input prices">
+    </div>
+</div>
+<script>
+    layui.use(['form','layer'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery;
+
+        form.on("submit(add)",function(data) {
+            $.post('/index.php/task/finishTask', data.field, function (res) {
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 2, time: 2000});
+                } else if(res.code == 0) {
+                    layer.msg(res.msg, {time: 500});
+                    setTimeout(function(){
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },2000);
+                }else{
+                    layer.msg('保存失败', {icon: 2, time: 500});
+                }
+            }, 'json');
+            return false;
+        });
+    });
+</Script>
+{/block}

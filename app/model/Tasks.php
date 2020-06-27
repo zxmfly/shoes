@@ -20,13 +20,13 @@ class Tasks extends Model
         $dict = getDict();
         $fix = Fixs::select()->toArray();
         $fixArr = getByIndex($fix, 'id', 'name');
-        $admin = Session::get('shoesAdmin');
+        $admin = Session::get('adminInfo');
         foreach ($lists as &$row){
             $row['type_txt'] = $row['type'] == 1 ? '维修' : '返修';
             $row['fix'] = $fixArr[$row['fix_type']];
             $row['status_txt'] = $dict['order_status'][$row['status']];
             $row['is_ok'] = $row['status'] >= 3 && $row['status'] < 10 ? 1 : 0;
-            $row['admin']= $admin;
+            $row['admin'] = $admin['name'];
         }
         $data['data'] = $lists;
         return $data;

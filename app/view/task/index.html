@@ -2,8 +2,13 @@
 {block name="title"}任务列表{/block}
 {block name="script_block"}
 <script type="text/html" id="listBar">
+    {{#  if(d.user_name === d.admin && d.is_ok === 0){ }}
+    <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="finish_task">已完成</a>
+    {{#  } }}
+    {if $action != 'myTask'}
     <a class="layui-btn layui-btn-xs" lay-event="assign_task">已派单</a>
     <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+    {/if}
 </script>
 {/block}
 {block name="header"}
@@ -15,9 +20,17 @@
             </div>
             <div class="layui-input-inline $status_arr">
                 <select name="status" class="status" >
-                    <option>全部</option>
+                    <option value="">状态</option>
                     {foreach $status_arr as $key=>$v }
                     <option value="{$key}">{$v}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <select name="uid" class="uid" >
+                    {if !$selected}<option value="0">维修员</option>{/if}
+                    {foreach $users as $k=>$v }
+                    <option value="{$v.id}" {$selected == $v.id ? 'selected' : '' }>{$v.name}</option>
                     {/foreach}
                 </select>
             </div>
@@ -28,9 +41,6 @@
 {/block}
 {block name="table"}
 <table id="list" lay-filter="list"></table>
-<script type="text/html" id="switchTpl">
-    <input {{ d.user_name != d.admin ? 'disabled' : '' }} type="checkbox" name="is_ok" value="{{d.is_ok}}" lay-skin="switch" lay-text="是|否" lay-filter="is_ok" {{ d.is_ok == 1 ? 'checked' : '' }}>
-</script>
 <script type="text/javascript">
     layui.use(['layer','form','table','laydate'],function(){
         var form = layui.form,
@@ -44,7 +54,7 @@
         //列表
         var tableIns = table.render({
             elem: '#list',
-            url : '/index.php/task/getList',
+            url : {if $action == 'myTask'}'/index.php/task/getList?uid={$uid}'{else}'/index.php/task/getList'{/if},
             cellMinWidth : 100,
             page : true,
             height : "full-110",
@@ -54,6 +64,7 @@
             //toolbar: 'true', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
             cols : [[
                 {field: 'order_id', title: '诚和订单', minWidth:170},
+                {field: 'type_txt', title: '任务类型', width:60, templet: '#taskType'},
                 {field: 'fix',      title: '维修类型', minWidth:80},
                 {field: 'task_explain', title: '任务说明'},
                 {field: 'status_txt',   title: '状态', width:80},
@@ -63,7 +74,6 @@
                 {field: 'repair_order', title: '返修订单',},
                 {field: 'create_time',  title: '入库时间',},
                 {field: 'finish_time',  title: '完成时间',},
-                {field: 'is_ok',        title:'已修复', templet: '#switchTpl', minWidth:60, unresize: true},
                 {title: '操作', minWidth:50, templet:'#listBar',fixed:"right"}
             ]]
         });
@@ -146,6 +156,30 @@
                         }
                     })
                 });
+            }else if(layEvent === 'finish_task'){
+                if(data.status >= 3){
+                    layer.msg('任务维修完成，不要重复操作哟', {icon: 7, time: 2000});
+                    return false;
+                }
+                var index = layui.layer.open({
+                    title : '任务完成',
+                    type : 2,
+                    content: '/index.php/task/finishTask?order_id='+data.order_id+'&assess_prices='+data.assess_prices,
+                    success : function(layero, index){
+                        setTimeout(function(){
+                            layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                                tips: 3,
+                                time: 2000
+                            });
+                        },500)
+                    }
+                })
+                layui.layer.full(index);
+                window.sessionStorage.setItem("index",index);
+                //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+                $(window).on("resize",function(){
+                    layui.layer.full(window.sessionStorage.getItem("index"));
+                })
             }else if(layEvent === 'del'){ //删除
                 layer.confirm('确定删除此订单?',{icon:3, title:'提示信息'},function(index){
                     $.get('/index.php/task/del',{
@@ -165,5 +199,12 @@
             }
         });
     });
+</script>
+<script type="text/html" id="taskType">
+    {{#  if(d.type_txt === '返修'){ }}
+    <span style="color: #FFB800;">{{ d.type_txt }}</span>
+    {{#  } else { }}
+    {{ d.type_txt }}
+    {{#  } }}
 </script>
 {/block}

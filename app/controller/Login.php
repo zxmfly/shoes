@@ -48,6 +48,7 @@ class Login extends BaseController
             return json(getRs(1,'账号已被禁用'));
         }
         Session::Set('shoesAdmin', $all['user_name']);
+        Session::set('adminInfo', $admin);
 
         return json(getRs(0,'登录成功'));
     }

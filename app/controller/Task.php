@@ -18,12 +18,18 @@ use think\facade\View;
 class Task extends BaseAdmin
 {
     public function index(){
+        $action = Request::param('action');
         $status_arr = getDict('order_status');
         $page_defult = $this->_pageDefault;
         $page_list = json_encode($this->_pageArr);
         $data = compact('page_defult','page_list','status_arr');
         $admin = $this->_admin;
         $data['admin'] = $admin['name'];
+        $data['uid'] = $admin['id'];
+        $users = Users::getTaskCount(0);
+        $data['users'] = $action == 'myTask' ? [['id'=>$admin['id'],'name'=>$admin['name']]] : $users;
+        $data['action'] = $action;
+        $data['selected'] = $action == 'myTask' ? $admin['id'] : 0;
         View::assign($data);
         if(empty($param)) return View::fetch();
     }
@@ -36,6 +42,9 @@ class Task extends BaseAdmin
         }
         if(isset($param['order_id']) && $param['order_id']){
             $where[] = ['order_id', '=', $param['order_id']];
+        }
+        if(isset($param['uid']) && $param['uid']){
+            $where[] = ['uid', '=', $param['uid']];
         }
         $page = isset($param['page']) ? $param['page'] : 1;
         $limit = isset($param['limit']) ? $param['limit'] : $this->_pageDefault;
@@ -55,7 +64,7 @@ class Task extends BaseAdmin
             $repair_order = Request::param('rep_oid');
             $type_arr = [1=>'新增', 2=>'返修'];
             $fix = Fixs::select()->toArray();
-            $users = Users::getTaskAll();
+            $users = Users::getTaskCount();
             $data = compact('order_id', 'repair_order', 'type_arr', 'fix', 'users');
             View::assign($data);
             return View::fetch();
@@ -74,10 +83,16 @@ class Task extends BaseAdmin
             $all['create_time'] = time();
             $result = Tasks::insertGetId($all);
             if($result) {
+
                 if (!$this->addTrack($all)) {
                     Orders::destroy($result);
                     $rs = getRs(4, '入库失败:追踪记录失败');
                 } else {
+                    Orders::where('order_id', $all['order_id'])->update([
+                        'status' => $all['status'],
+                        'prices' => $all['assess_prices']
+                    ]);
+
                     if ($all['repair_order']) {//返修追踪
                         $all['order_id'] = $all['repair_order'];
                         $this->addTrack($all);
@@ -85,10 +100,6 @@ class Task extends BaseAdmin
                     $rs = getRs(0, '入库成功');
                 }
             }
-            Orders::where('order_id', $all['order_id'])->update([
-                'status' => $all['status'],
-                'prices' => $all['assess_prices']
-            ]);
             return json($rs);
         }
     }
@@ -167,5 +178,36 @@ class Task extends BaseAdmin
             $rs = ['code'=>3,'msg'=>'操作有误'];
         }
         return json($rs);
+    }
+
+    public function finishTask(){
+        $all = Request::param();
+        if(Request::method() == 'GET' && isset($all['order_id'])) {
+            $data = [
+                'order_id' => $all['order_id'],
+                'assess_prices' => $all['assess_prices'],
+            ];
+            View::assign($data);
+            return View::fetch();
+        }elseif (Request::method() == 'POST' && isset($all['order_id']) && isset($all['prices'])){
+            $time = time();
+            Orders::where('order_id', $all['order_id'])->update([
+                'status' => 3,
+                'prices' => $all['prices'],
+                'finish_time' => $time
+            ]);
+            Tasks::where('order_id', $all['order_id'])->update([
+                'status' => 3,
+                'prices' => $all['prices'],
+                'finish_time' => $time
+            ]);
+            $all['create_time'] = $time;
+            $all['status'] = 3;
+            $this->addTrack($all);
+
+            return json(getRs());
+        }else{
+            return json(getRs(3, '操作失败'));
+        }
     }
 }
