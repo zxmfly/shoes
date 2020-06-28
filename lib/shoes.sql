@@ -150,20 +150,25 @@ CREATE TABLE `ch_tracks`  (
 -- Table structure for ch_users
 -- ----------------------------
 DROP TABLE IF EXISTS `ch_users`;
-CREATE TABLE `ch_users`  (
-  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '账号',
-  `password` char(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '密码',
-  `number` int(11) UNSIGNED NULL DEFAULT 0 COMMENT '工号',
-  `work_id` tinyint(4) UNSIGNED NULL DEFAULT 0 COMMENT '工作类别ID',
-  `role_id` int(11) UNSIGNED NULL DEFAULT 0 COMMENT '角色ID',
-  `sex` tinyint(4) UNSIGNED NULL DEFAULT 1 COMMENT '性别(1男2女)',
-  `name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '姓名',
-  `status` tinyint(4) UNSIGNED NULL DEFAULT 0 COMMENT '状态',
-  `create_time` int(11) UNSIGNED NULL DEFAULT 0,
-  `update_time` int(11) UNSIGNED NULL DEFAULT 0,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+CREATE TABLE `ch_users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_name` varchar(50) DEFAULT '' COMMENT '账号',
+  `password` char(32) DEFAULT '' COMMENT '密码',
+  `number` int(11) unsigned DEFAULT 0 COMMENT '工号',
+  `work_id` tinyint(4) unsigned DEFAULT 0 COMMENT '工作类别ID',
+  `role_id` int(11) unsigned DEFAULT 0 COMMENT '角色ID',
+  `sex` tinyint(4) unsigned DEFAULT 1 COMMENT '性别(1男2女)',
+  `name` varchar(20) DEFAULT '' COMMENT '姓名',
+  `status` tinyint(4) unsigned DEFAULT 0 COMMENT '状态',
+  `create_time` int(11) unsigned DEFAULT 0,
+  `update_time` int(11) unsigned DEFAULT 0,
+  `id_card` varchar(20) DEFAULT NULL COMMENT '身份证',
+  `phone_number` varchar(20) DEFAULT NULL COMMENT '电话',
+  `address` varchar(255) DEFAULT NULL COMMENT '住址',
+  `urgent_contact` varchar(20) DEFAULT NULL COMMENT '紧急联系人',
+  `urgent_phone` varchar(20) DEFAULT NULL COMMENT '紧急联系电话',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for ch_works

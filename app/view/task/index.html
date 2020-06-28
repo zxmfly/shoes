@@ -6,6 +6,7 @@
     <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="finish_task">已完成</a>
     {{#  } }}
     {if $action != 'myTask'}
+    <a class="layui-btn layui-btn-xs layui-bg-cyan" lay-event="task_label">标签</a>
     <a class="layui-btn layui-btn-xs" lay-event="assign_task">已派单</a>
     <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
     {/if}

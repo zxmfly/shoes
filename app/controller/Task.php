@@ -14,6 +14,8 @@ use app\model\Tasks;
 use app\model\Users;
 use think\facade\Request;
 use think\facade\View;
+use CodeItNow\BarcodeBundle\Utils\BarcodeGenerator;
+use CodeItNow\BarcodeBundle\Utils\QrCode;
 
 class Task extends BaseAdmin
 {

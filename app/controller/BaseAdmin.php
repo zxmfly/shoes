@@ -13,6 +13,7 @@ use app\BaseController;
 use app\model\Tracks;
 use app\model\Users;
 use think\App;
+use think\facade\Config;
 use think\facade\Session;
 
 class BaseAdmin extends BaseController
@@ -32,7 +33,17 @@ class BaseAdmin extends BaseController
         }
         $this->_admin = Session::get('adminInfo');
         if(empty($this->_admin)) {
-            $admin = Users::where('user_name', $this->shoesAdmin)->find();
+            $app = Config::get('app');
+            if($this->shoesAdmin != $app['ROOT']) {
+                $admin = Users::where('user_name', $this->shoesAdmin)->find();
+            }else{
+                $admin = [
+                    'id' => 0,
+                    'user_name' => $app['ROOT'],
+                    'name' => '超级管理员',
+                    'role_id' => 0,
+                ];
+            }
             Session::set('adminInfo', $admin);
         }
 
