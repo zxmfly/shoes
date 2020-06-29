@@ -61,11 +61,11 @@ class Task extends BaseAdmin
     }
 
     public function add(){
+        $fix = Fixs::select()->toArray();
         if(Request::method() == 'GET') {
             $order_id = Request::param('oid');
             $repair_order = Request::param('rep_oid');
             $type_arr = [1=>'新增', 2=>'返修'];
-            $fix = Fixs::select()->toArray();
             $users = Users::getTaskCount();
             $data = compact('order_id', 'repair_order', 'type_arr', 'fix', 'users');
             View::assign($data);
@@ -84,8 +84,8 @@ class Task extends BaseAdmin
             $all['status'] = $all['repair_order'] ? 11 : 1;
             $all['create_time'] = time();
             $result = Tasks::insertGetId($all);
+            $rs_data = [];
             if($result) {
-
                 if (!$this->addTrack($all)) {
                     Orders::destroy($result);
                     $rs = getRs(4, '入库失败:追踪记录失败');
@@ -99,7 +99,15 @@ class Task extends BaseAdmin
                         $all['order_id'] = $all['repair_order'];
                         $this->addTrack($all);
                     }
-                    $rs = getRs(0, '入库成功');
+                    $fix_arr = getByIndex($fix,'id', 'name');
+                    $rs_data = [
+                        'order_id' => $all['order_id'],
+                        'fix_txt' => $fix_arr[$all['fix_type']],
+                        'fix_user' => $all['user_name'],
+                        'task_time' => $all['create_time'],
+                        'task_explain' => $all['task_explain'],
+                    ];
+                    $rs = getRs(0, '入库成功', $rs_data);
                 }
             }
             return json($rs);

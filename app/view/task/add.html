@@ -63,7 +63,7 @@
                             </div>
                             <div class="layui-form-item layui-row ">
                                 <label class="layui-form-label">任务说明</label>
-                                <div class="layui-input-inline order_desc">
+                                <div class="layui-input-inline task_explain">
                                     <textarea placeholder="说明尽量简洁明了" class="layui-textarea task_explain" lay-verify="required" name="task_explain"></textarea>
                                 </div>
                             </div>
@@ -98,8 +98,8 @@
             <div class="layui-col-md6" id="task_label" style="display: none;" >
                 <div class="layui-card">
                     <div class="layui-card-header"><i class="fa fa-credit-card icon icon-blue"></i>标签信息</div>
-                    <div class="layui-card-body" id="printTable" >
-                        <table class="layui-table mag0">
+                    <div class="layui-card-body"  >
+                        <table class="layui-table mag0" id="printTable">
                             <tbody class="hot_news">
                                 <tr><td align="left" id="brcode" style="width: 100%;"></td></tr>
                                 <tr><td align="left">维修类型：<span id="fix_txt"></span></td></tr>
@@ -110,6 +110,7 @@
                         </table>
                         <div class="layui-input-block">
                             <button class="layui-btn layui-btn-sm" id="print_label">打印</button>
+                            <button style="margin-left: 10px;"  class="layui-btn layui-btn-sm layui-btn-danger" id="close_page">关闭页面</button>
                         </div>
                     </div>
                 </div>
@@ -142,25 +143,25 @@
             }
         });
 
+        $("#close_page").on('click',function () {
+             layer.closeAll("iframe");
+            //刷新父页面
+             parent.location.reload();
+        })
+
         form.on("submit(add)",function(data) {
             $.post('/index.php/task/add', data.field, function (res) {
                 if (res.code > 0) {
                     layer.msg(res.msg, {icon: 2, time: 2000});
                 } else if(res.code == 0) {
                     var d = res.data;
-                    layer.msg(res.msg, {time: 500});
-                    getBrcode();
+                    layer.msg(res.msg, {time: 1000});
+                    getBrcode(d.order_id);
                     $('#task_label').show();
                     $('#fix_txt').html(d.fix_txt);
                     $('#fix_user').html(d.fix_user);
                     $('#task_time').html(d.task_time);
                     $('#task_explain').html(d.task_explain);
-
-                    setTimeout(function(){
-                        layer.closeAll("iframe");
-                        //刷新父页面
-                        parent.location.reload();
-                    },2000);
                 }else{
                     layer.msg('保存失败', {icon: 2, time: 500});
                 }
@@ -168,9 +169,9 @@
             return false;
         });
 
-        function getBrcode() {
+        function getBrcode(oid) {
             $.get('/index.php/barcode/brcode', {
-                order_id: {$order_id}
+                order_id: oid
             }, function (res) {
                 if (res.code > 0) {
                     layer.msg('条形码生成失败', {icon: 2, time: 2000});
