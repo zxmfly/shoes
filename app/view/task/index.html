@@ -64,18 +64,18 @@
             id : listId,
             //toolbar: 'true', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
             cols : [[
-                {field: 'order_id', title: '诚和订单', minWidth:170},
-                {field: 'type_txt', title: '任务类型', width:60, templet: '#taskType'},
+                {field: 'order_id', title: '诚和订单', minWidth:170, event: 'oid_copy', style:'cursor: pointer;'},
+                {field: 'type_txt', title: '任务', width:60, templet: '#taskType'},
                 {field: 'fix',      title: '维修类型', minWidth:80},
                 {field: 'task_explain', title: '任务说明'},
                 {field: 'status_txt',   title: '状态', width:80},
                 {field: 'assess_prices',title: '估价', width:60},
                 {field: 'prices',       title: '定价', width:60},
                 {field: 'user_name',    title: '维修员', width:80},
-                {field: 'repair_order', title: '返修订单',},
+                {field: 'repair_order', title: '返修订单', event: 'repoid_copy', style:'cursor: pointer;'},
                 {field: 'create_time',  title: '入库时间',},
                 {field: 'finish_time',  title: '完成时间',},
-                {title: '操作', minWidth:50, templet:'#listBar',fixed:"right"}
+                {title: '操作', minWidth:110, templet:'#listBar',fixed:"right"}
             ]]
         });
 
@@ -136,7 +136,14 @@
         table.on('tool(list)', function(obj){
             var layEvent = obj.event,
                 data = obj.data;
-            if(layEvent === 'assign_task'){ //已派单
+            if(layEvent === 'oid_copy' || layEvent === 'repoid_copy'){
+                var copyText = data.order_id;//获取对象
+                if(layEvent === 'repoid_copy') copyText = data.repair_order;
+                if(copyText == '') return false;
+                copy(copyText);
+                layer.msg('复制成功', {time: 1000});
+
+            }else if(layEvent === 'assign_task'){ //已派单
                 if(data.status >= 2){
                     layer.msg('已派过单啦，不要重复操作哟', {icon: 7, time: 2000});
                     return false;
