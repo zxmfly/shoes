@@ -25,8 +25,10 @@ class Tasks extends Model
             $row['type_txt'] = $row['type'] == 1 ? '维修' : '返修';
             $row['fix'] = $fixArr[$row['fix_type']];
             $row['status_txt'] = $dict['order_status'][$row['status']];
-            $row['is_ok'] = $row['status'] >= 3 && $row['status'] < 10 ? 1 : 0;
+            $row['is_ok'] = $row['status'] >= 3 && $row['status'] != 5 ? 1 : 0;
             $row['admin'] = $admin['name'];
+            $row['is_assign'] = $row['status'] >= 2 ? 1 : 0; //是否派单
+            $row['finish_time'] && $row['finish_time'] = date('Y-m-d H:i:s', $row['finish_time']);
         }
         $data['data'] = $lists;
         return $data;

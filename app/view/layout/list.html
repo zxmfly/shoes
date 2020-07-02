@@ -17,17 +17,16 @@
     {/block}
     <link rel="stylesheet" href="/static/css/public.css" media="all" />
     <script>
-        function copy(copyText){
-            var aux = document.createElement("input");
-            aux.setAttribute("value", copyText);
-            document.body.appendChild(aux);
-            aux.select();
+        function copy(text){
+            var copyText = document.getElementById("copyText");
+            copyText.innerText = text;
+            copyText.select();
             document.execCommand("copy");
-            document.body.removeChild(aux);
         }
     </script>
 </head>
 <body class="childrenBody">
+<textarea id="copyText"></textarea>
 <form class="layui-form">
     {block name="header"}
         <blockquote class="layui-elem-quote quoteBox" >

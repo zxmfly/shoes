@@ -23,7 +23,7 @@
 <div class="layui-row layui-col-space15">
     <div class="layui-col-md8">
         <div class="layui-row layui-col-space15">
-            <div class="layui-col-md6">
+            <div class="layui-col-md6" id="add_task_div">
                 <div class="layui-card">
                     <div class="layui-card-header"><i class="fa fa-warning icon"></i>任务分配</div>
                     <div class="layui-card-body">
@@ -95,7 +95,7 @@
                     </div>
                 </div>
             </div>
-            <div class="layui-col-md6" id="task_label" style="display: none;" >
+            <div class="layui-col-md6" id="task_label" style="display: none;">
                 <div class="layui-card">
                     <div class="layui-card-header"><i class="fa fa-credit-card icon icon-blue"></i>标签信息</div>
                     <div class="layui-card-body"  >
@@ -110,7 +110,9 @@
                         </table>
                         <div class="layui-input-block">
                             <button class="layui-btn layui-btn-sm" id="print_label">打印</button>
+                            {if $action != 'task_label'}
                             <button style="margin-left: 10px;"  class="layui-btn layui-btn-sm layui-btn-danger" id="close_page">关闭页面</button>
+                            {/if}
                         </div>
                     </div>
                 </div>
@@ -131,6 +133,10 @@
         var form = layui.form,
             layer = layui.layer,
             $ = layui.jquery;
+        {if $action == 'task_label'}
+            getBrcode({$order_id});
+        {/if}
+
         form.on('select(type)', function(data){
             var type = data.value; //得到被选中的值
             if(type == 2){
@@ -155,7 +161,7 @@
                     layer.msg(res.msg, {icon: 2, time: 2000});
                 } else if(res.code == 0) {
                     var d = res.data;
-                    layer.msg(res.msg, {time: 1000});
+                    layer.msg(res.msg, {time: 1000, anim: 2});
                     getBrcode(d.order_id);
                     $('#task_label').show();
                     $('#fix_txt').html(d.fix_txt);

@@ -7,7 +7,9 @@
     {{#  } }}
     {if $action != 'myTask'}
     <a class="layui-btn layui-btn-xs layui-bg-cyan" lay-event="task_label">标签</a>
+    {{#  if(d.is_assign === 0){ }}
     <a class="layui-btn layui-btn-xs" lay-event="assign_task">已派单</a>
+    {{#  } }}
     <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
     {/if}
 </script>
@@ -132,11 +134,44 @@
             })
         }
 
+        function addTask(data, title) {
+            var index = layui.layer.open({
+                title : title,
+                type : 2,
+                content : "/index.php/task/add?oid="+data.order_id+"&rep_oid="+data.repair_order+"&action=task_label",
+                success : function(layero, index){
+                    var body = layui.layer.getChildFrame('body', index);
+                    if(data){
+                        body.find('#add_task_div').hide();
+                        body.find('#task_label').show();
+                        body.find('#fix_txt').html(data.fix);
+                        body.find('#fix_user').html(data.user_name);
+                        body.find('#task_time').html(data.create_time);
+                        body.find('#task_explain').html(data.task_explain);
+                    }
+                    setTimeout(function(){
+                        layui.layer.tips('点击此处返回列表', '.layui-layer-setwin .layui-layer-close', {
+                            tips: 3,
+                            time: 2000
+                        });
+                    },500)
+                },
+            })
+            layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
+            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+            $(window).on("resize",function(){
+                layui.layer.full(window.sessionStorage.getItem("index"));
+            })
+        }
+
         //列表操作//注：tool 是工具条事件名，userList 是 table 原始容器的属性 lay-filter="对应的值"
         table.on('tool(list)', function(obj){
             var layEvent = obj.event,
                 data = obj.data;
-            if(layEvent === 'oid_copy' || layEvent === 'repoid_copy'){
+            if(layEvent === 'task_label'){
+                addTask(data, '任务标签');
+            }else if(layEvent === 'oid_copy' || layEvent === 'repoid_copy'){
                 var copyText = data.order_id;//获取对象
                 if(layEvent === 'repoid_copy') copyText = data.repair_order;
                 if(copyText == '') return false;

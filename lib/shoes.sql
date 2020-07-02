@@ -88,24 +88,18 @@ CREATE TABLE `ch_orders` (
   `order_id` varchar(50) NOT NULL DEFAULT '' COMMENT '诚和订单号',
   `create_time` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '新增时间',
   `channel_id` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '来源ID',
-  `task_id` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '生成订单',
   `status` tinyint(4) unsigned NOT NULL DEFAULT 0 COMMENT '订单状态',
   `finish_time` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '订单完成时间',
-  `send_id` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '发货ID',
   `prices` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '最终价格',
-  `operator_id` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '操作者ID',
-  `operator` varchar(50) NOT NULL DEFAULT '' COMMENT '操作者',
-  `track_id` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '追踪ID',
-  `check_id` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '审核ID',
   `repair_order` varchar(50) DEFAULT '' COMMENT '返修对应订单号',
   `order_desc` varchar(255) DEFAULT '' COMMENT '订单描述',
-  `order_type` tinyint(4) unsigned DEFAULT 0 COMMENT '订单类型：1新增，2返修',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `express` (`customer_express`) USING BTREE,
-  UNIQUE KEY `order_id` (`order_id`) USING BTREE,
-  KEY `ct` (`create_time`) USING BTREE,
-  KEY `ft` (`finish_time`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='订单列表';
+  `send_id` varchar(50) NOT NULL DEFAULT '' COMMENT '运单号',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `express` (`customer_express`),
+  UNIQUE KEY `order_id` (`order_id`),
+  KEY `ct` (`create_time`),
+  KEY `ft` (`finish_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单列表';
 -- ----------------------------
 -- Table structure for ch_tasks
 -- ----------------------------
