@@ -65,3 +65,24 @@ ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
     4 数据不存在
     5 重复操作
     6 禁止操作
+    
+## nginx配置：
+    1、nginx 要加入重写规则：
+        location / {  
+         
+            # !!!url重写!!!
+            if (!-e $request_filename) {  
+                rewrite ^/index.php(.*)$ /index.php?s=$1 last;  
+                rewrite ^(.*)$ /index.php?s=$1 last;  
+                break;  
+            }  
+    2、解决ThinkPHP部署nginx时出现Access denied.
+        修改php.ini
+            vi /usr/local/php/etc/php.ini  #编辑文件
+            #cgi.fix_pathinfo由0改为1
+        修改 nginx.conf
+            #添加TP5的三个配置
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_param   PATH_INFO   $fastcgi_path_info;
+            fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        
