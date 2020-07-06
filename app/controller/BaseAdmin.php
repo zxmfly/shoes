@@ -66,4 +66,6 @@ class BaseAdmin extends BaseController
         Session::clear();
         return redirect('/login');
     }
+
+    //权限设置
 }

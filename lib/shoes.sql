@@ -93,7 +93,8 @@ CREATE TABLE `ch_orders` (
   `prices` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '最终价格',
   `repair_order` varchar(50) DEFAULT '' COMMENT '返修对应订单号',
   `order_desc` varchar(255) DEFAULT '' COMMENT '订单描述',
-  `send_id` varchar(50) NOT NULL DEFAULT '' COMMENT '运单号',
+  `send_id` varchar(50) DEFAULT '' COMMENT '运单号',
+  `send_time` int(11) unsigned DEFAULT 0 COMMENT '发货时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `express` (`customer_express`),
   UNIQUE KEY `order_id` (`order_id`),
@@ -161,6 +162,7 @@ CREATE TABLE `ch_users` (
   `address` varchar(255) DEFAULT NULL COMMENT '住址',
   `urgent_contact` varchar(20) DEFAULT NULL COMMENT '紧急联系人',
   `urgent_phone` varchar(20) DEFAULT NULL COMMENT '紧急联系电话',
+  `lock_screen` varchar(50) DEFAULT '' COMMENT '锁屏密码',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

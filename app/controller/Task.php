@@ -231,16 +231,19 @@ class Task extends BaseAdmin
             View::assign($data);
             return View::fetch();
         }
-        isset($param['id']) && $id = intval($param['id']);
-        if(isset($param['action']) && in_array($param['action'], ['pass_task','fail_task']) && $id){
-            $id = $param['id'];
+
+        if(isset($param['action']) && $param['action'] == 'pass_task'){
+            isset($param['id']) && $id = intval($param['id']);
+            if(empty($id)){
+                return json(getRs(1, '操作失败：缺少必要参数'));
+            }
             $task = Tasks::where('id', $param['id'])->find();
             if(empty($task)){
                 $rs = getRs(4, '操作失败:任务不存在,请刷新重试');
-            }elseif(!in_array($task['status'], [3,5])){
+            }elseif($task['status'] != 3){
                 $rs = getRs(5, '任务已审核，请勿重复操作');
             }else{
-                $status = $param['action'] == 'pass_task' ? 4 : 5;
+                $status = 4;
                 $update = [
                     'id' => $id,
                     'status' => $status,
@@ -263,7 +266,70 @@ class Task extends BaseAdmin
             }
             return json($rs);
         }else{
-            $where[] = ['status', 'in', '3,5'];
+            $where[] = ['status', '=', '3'];
+            if(isset($param['order_id']) && $param['order_id']){
+                $where[] = ['order_id', '=', $param['order_id']];
+            }
+            $page = isset($param['page']) ? $param['page'] : 1;
+            $limit = isset($param['limit']) ? $param['limit'] : $this->_pageDefault;
+            $all = Tasks::getAll($where, $page, $limit);
+            $count = $all['count'];
+            $data = $all['data'];
+            $code = 0;
+            $msg = 'ok';
+            $list = compact('code','msg','count','data');
+            return json($list);
+        }
+    }
+
+    public function send(){
+        $param = Request::param();
+        if(empty($param)){
+            $page_defult = $this->_pageDefault;
+            $page_list = json_encode($this->_pageArr);
+            $data = compact('page_defult','page_list');
+            View::assign($data);
+            return View::fetch();
+        }
+        if(isset($param['action']) && $param['action'] == 'send'){
+            isset($param['id']) && $id = intval($param['id']);
+            isset($param['send_id']) && $send_id = $param['send_id'];
+            if(empty($id) || empty($send_id)){
+                return json(getRs(1, '操作失败：缺少必要参数'));
+            }
+            $task = Tasks::where('id', $param['id'])->find();
+            if(empty($task)){
+                $rs = getRs(4, '操作失败:任务不存在,请刷新重试');
+            }elseif($task['status'] != 4){
+                $rs = getRs(5, '任务已审核，请勿重复操作');
+            }else{
+                $time = time();
+                $status = 5;
+                $update = [
+                    'id' => $id,
+                    'status' => $status,
+                ];
+                $r = Tasks::updateById($update);
+                $r = Orders::where('order_id', $task['order_id'])->update([
+                    'status' => $status,
+                    'send_id' => $send_id,
+                    'send_time' => $time,
+                ]);
+                if($r){
+                    $all = [
+                        'create_time' => $time,
+                        'status' => $status,
+                        'order_id' => $task['order_id'],
+                    ];
+                    $this->addTrack($all);
+                    $rs = getRs(0, '操作成功');
+                }else{
+                    $rs = getRs(3, '操作失败');
+                }
+            }
+            return json($rs);
+        }else{
+            $where[] = ['status', '=', 4];
             if(isset($param['order_id']) && $param['order_id']){
                 $where[] = ['order_id', '=', $param['order_id']];
             }

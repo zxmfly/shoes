@@ -163,4 +163,24 @@ class Worker extends BaseAdmin
         }
         return json($rs);
     }
+
+    public function info()
+    {
+        if(Request::isGet()) {
+            $admin = $this->_admin;
+            $id = $admin['id'];
+            $data = Users::getAll(['id' => $id]);
+            $info = $data['data'][0];
+            View::assign($info);
+            return View::fetch();
+        }elseif(Request::isPost()){
+            $r = Users::updateUsers(Request::param());
+            $rs = $r ? getRs(0, '修改成功') : getRs(3, '修改失败');
+            return json($rs);
+        }
+    }
+
+    public function password(){
+
+    }
 }

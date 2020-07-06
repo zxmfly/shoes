@@ -1,0 +1,109 @@
+{extend name="layout/add" /}
+{block name="title"}个人信息{/block}
+{block name="style_block"}
+<style>
+    .text_line{
+        float: left;
+        display: block;
+        padding: 9px 5px;
+        width: 80px;
+        font-weight: 400;
+        line-height: 20px;
+        text-align: left;
+    }
+</style>
+{/block}
+{block name="script_block"}{/block}
+{block name="form_block"}
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md2">
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">用户名:</label>
+            <div class=" text_line" >{$user_name}</div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">工号:</label>
+            <div class="text_line">{$number}</div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">姓名:</label>
+            <div class="text_line">{$name}</div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">性别:</label>
+            <div class="text_line userSex">{$sex_text}</div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">部门:</label>
+            <div class="text_line work_id">{$work_text}</div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">权限:</label>
+            <div class="text_line role_id">{$role_text}</div>
+        </div>
+    </div>
+    <div class="layui-col-md5">
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">身份证</label>
+            <div class="layui-input-inline">
+                <input type="txt" lay-verify="required|number" name="id_card" class="layui-input id_card" value="{$id_card}">
+            </div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-inline">
+                <input type="txt" lay-verify="required|number" name="phone_number" class="layui-input phone_number" value="{$phone_number}">
+            </div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12 ">
+            <label class="layui-form-label">紧急联系人</label>
+            <div class="layui-input-inline">
+                <input type="txt" lay-verify="required" name="urgent_contact" class="layui-input urgent_contact" value="{$urgent_contact}">
+            </div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">紧急电话</label>
+            <div class="layui-input-inline">
+                <input type="txt" lay-verify="required|number" name="urgent_phone" class="layui-input urgent_phone" value="{$urgent_phone}">
+            </div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">锁屏密码</label>
+            <div class="layui-input-inline">
+                <input type="txt" name="lock_screen" class="layui-input lock_screen" value="{$lock_screen}">
+            </div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <label class="layui-form-label">住址</label>
+            <div class="layui-input-inline address">
+                <textarea lay-verify="required" class="layui-textarea address" name="address">{$address}</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-row layui-col-xs12">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="add">保存</button>
+                <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">重置</button>
+            </div>
+        </div>
+        <input type="hidden" name="id" value="{$id}">
+    </div>
+</div>
+<script>
+layui.use(['form','layer'],function(){
+    var form = layui.form,
+        layer = layui.layer,
+    $ = layui.jquery;
+
+    form.on("submit(add)",function(data) {
+        $.post('/index.php/worker/info', data.field, function (res) {
+            if (res.code > 0) {
+                layer.msg(res.msg, {icon: 2, time: 2000});
+            } else {
+                layer.msg(res.msg, {time: 500});
+            }
+        }, 'json');
+        return false;
+    });
+});
+</Script>
+{/block}

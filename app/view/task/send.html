@@ -1,8 +1,7 @@
 {extend name="layout/list" /}
-{block name="title"}任务审核{/block}
+{block name="title"}待发列表{/block}
 {block name="script_block"}
 <script type="text/html" id="listBar">
-    <a class="layui-btn layui-btn-xs " lay-event="pass_task">审核通过</a>
 </script>
 {/block}
 {block name="header"}
@@ -31,7 +30,7 @@
         //列表
         var tableIns = table.render({
             elem: '#list',
-            url : '/index.php/task/check',
+            url : '/index.php/task/send',
             cellMinWidth : 100,
             page : true,
             height : "full-110",
@@ -42,12 +41,10 @@
             cols : [[
                 {field: 'order_id', title: '诚和订单', minWidth:170, event: 'oid_copy', style:'cursor: pointer;'},
                 {field: 'fix',      title: '维修类型', minWidth:80},
-                {field: 'task_explain', title: '任务说明'},
-                {field: 'status_txt',   title: '状态', width:80},
-                {field: 'assess_prices',title: '估价', width:60},
-                {field: 'prices',       title: '定价', width:60},
                 {field: 'user_name',    title: '维修员', width:80},
-                {title: '操作', minWidth:110, templet:'#listBar',fixed:"right"}
+                {field: 'status_txt',   title: '状态', },
+                {field: 'finish_time',title: '完成时间', },
+                {field: 'send_id',title: '发货单号', edit: 'text' }
             ]]
         });
 
@@ -64,16 +61,17 @@
             })
         });
 
-        //列表操作//注：tool 是工具条事件名，userList 是 table 原始容器的属性 lay-filter="对应的值"
-        table.on('tool(list)', function(obj){
-            var layEvent = obj.event,
-                data = obj.data;
-            if(layEvent === 'pass_task'){
-                var msg = '通过审核';
-                layer.confirm('确定'+msg+'?',{icon:3, title:'提示信息'},function(index){
-                    $.get('/index.php/task/check',{
+        //监听单元格编辑
+        table.on('edit(list)', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            if(field == 'send_id') {
+                layer.confirm('确定已发货，并填写正确的运单号?',{icon:3, title:'提示信息'},function(index){
+                    $.get('/index.php/task/send',{
                         id : data.id,
-                        action : layEvent
+                        send_id : value,
+                        action : 'send'
                     },function(res){
                         if (res.code > 0) {
                             layer.msg(res.msg, {icon: 2, time: 2000});
@@ -88,13 +86,7 @@
                 });
             }
         });
+
     });
-</script>
-<script type="text/html" id="taskType">
-    {{#  if(d.type_txt === '返修'){ }}
-    <span style="color: #FFB800;">{{ d.type_txt }}</span>
-    {{#  } else { }}
-    {{ d.type_txt }}
-    {{#  } }}
 </script>
 {/block}
