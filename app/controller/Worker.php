@@ -10,6 +10,7 @@ namespace app\controller;
 
 use app\model\Works;
 use think\facade\Request;
+use think\facade\Session;
 use think\facade\View;
 use app\model\Users;
 
@@ -166,21 +167,72 @@ class Worker extends BaseAdmin
 
     public function info()
     {
+        $admin = $this->_admin;
         if(Request::isGet()) {
-            $admin = $this->_admin;
             $id = $admin['id'];
             $data = Users::getAll(['id' => $id]);
             $info = $data['data'][0];
             View::assign($info);
             return View::fetch();
         }elseif(Request::isPost()){
-            $r = Users::updateUsers(Request::param());
-            $rs = $r ? getRs(0, '修改成功') : getRs(3, '修改失败');
+            $all = Request::param();
+            if($all['lock_screen']){
+                $all['lock_screen'] = md5($admin['user_name'] . $all['lock_screen']);
+            }else{
+                unset($all['lock_screen']);
+            }
+            Users::updateUsers($all);
+            $rs = getRs(0, '修改成功');
             return json($rs);
         }
     }
 
     public function password(){
+        $admin = $this->_admin;
+        if(Request::isGet()) {
+            $data = [
+                'admin' => $admin['user_name'],
+            ];
+            View::assign($data);
+            return View::fetch();
+        }elseif(Request::isPost()){
+            $d = Request::param();
+            $oldPwd = $d['oldPwd'];
+            $newPwd = $d['newPwd'];
+            $confirmPwd = $d['confirmPwd'];
+            if(strlen($newPwd) < 6){
+                $rs = getRs(1, '密码长度不能小于6');
+            }elseif($newPwd != $confirmPwd){
+                $rs = getRs(1, '两次输入密码不一样');
+            }elseif($admin['password'] != md5($admin['user_name'] . $oldPwd)){
+                $rs = getRs(1, '旧密码错误');
+            }elseif($admin['password'] == md5($admin['user_name'] . $newPwd)){
+                $rs = getRs(1, '新密码不能和旧密码一样');
+            }else{
+                $update = [
+                    'id' => $admin['id'],
+                    'password' => md5($admin['user_name'] . $newPwd),
+                ];
+                Users::updateUsers($update);
+                $rs = getRs(0, '修改成功');
+            }
+            return json($rs);
+        }
+    }
 
+    public function unlock(){
+        if(Request::param('pwd')){
+            $admin = $this->_admin;
+            $pwd = Request::param('pwd');
+            if(md5($admin['user_name'].$pwd) == $admin['lock_screen']){
+                $rs = getRs(0, '已解锁');
+            }else{
+                $rs = getRs(2, '锁屏密码错误');
+            }
+        }else{
+            $rs = getRs(1, '锁屏密码错误');
+        }
+
+        return json($rs);
     }
 }

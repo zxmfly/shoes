@@ -89,6 +89,10 @@ layui.use(['bodyTab','form','element','layer','jquery'],function(){
 		window.sessionStorage.removeItem("menu");
 		window.sessionStorage.removeItem("curmenu");
 	}
+    //控制表格编辑时文本的位置【跟随渲染时的位置】
+    $("body").on("click",".layui-table-body.layui-table-main tbody tr td",function(){
+        $(this).find(".layui-table-edit").addClass("layui-"+$(this).attr("align"));
+    });
 })
 
 //打开新窗口

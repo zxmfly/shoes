@@ -70,8 +70,9 @@
         <div class="layui-form-item layui-row layui-col-xs12">
             <label class="layui-form-label">锁屏密码</label>
             <div class="layui-input-inline">
-                <input type="txt" name="lock_screen" class="layui-input lock_screen" value="{$lock_screen}">
+                <input type="txt" name="lock_screen" class="layui-input lock_screen" value="">
             </div>
+            <div class="layui-form-mid layui-word-aux">为空则不修改</div>
         </div>
         <div class="layui-form-item layui-row layui-col-xs12">
             <label class="layui-form-label">住址</label>
@@ -100,6 +101,9 @@ layui.use(['form','layer'],function(){
                 layer.msg(res.msg, {icon: 2, time: 2000});
             } else {
                 layer.msg(res.msg, {time: 500});
+                setTimeout(function(){
+                    window.location.reload();
+                },1000);
             }
         }, 'json');
         return false;

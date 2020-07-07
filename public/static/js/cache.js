@@ -48,28 +48,27 @@ layui.use(['form','jquery',"layer"],function() {
 
     //锁屏
     function lockPage(){
+        if($('#is_lock_screen').text() != 'lock'){
+            layer.msg("请先设置锁屏密码，再来锁屏吧！");
+            return false;
+        }
+
+        var name = $('.adminName').text();
         layer.open({
             title : false,
             type : 1,
             content : '<div class="admin-header-lock" id="lock-box">'+
-                            '<div class="admin-header-lock-img"><img src="images/face.jpg" class="userAvatar"/></div>'+
-                            '<div class="admin-header-lock-name" id="lockUserName">驊驊龔頾</div>'+
+                            '<div class="admin-header-lock-name" id="lockUserName">'+name+'</div>'+
                             '<div class="input_btn">'+
                                 '<input type="password" class="admin-header-lock-input layui-input" autocomplete="off" placeholder="请输入密码解锁.." name="lockPwd" id="lockPwd" />'+
                                 '<button class="layui-btn" id="unlock">解锁</button>'+
                             '</div>'+
-                            '<p>请输入“123456”，否则不会解锁成功哦！！！</p>'+
                         '</div>',
             closeBtn : 0,
-            shade : 0.9,
-            success : function(){
-                //判断是否设置过头像，如果设置过则修改顶部、左侧和个人资料中的头像，否则使用默认头像
-                if(window.sessionStorage.getItem('userFace') &&  $(".userAvatar").length > 0){
-                    $(".userAvatar").attr("src",$(".userAvatar").attr("src").split("images/")[0] + "images/" + window.sessionStorage.getItem('userFace').split("images/")[1]);
-                }
-            }
+            shade : 0.9
         })
         $(".admin-header-lock-input").focus();
+
     }
     $(".lockcms").on("click",function(){
         window.sessionStorage.setItem("lockcms",true);
@@ -81,18 +80,30 @@ layui.use(['form','jquery',"layer"],function() {
     }
     // 解锁
     $("body").on("click","#unlock",function(){
-        if($(this).siblings(".admin-header-lock-input").val() == ''){
+        var pwd = $(this).siblings(".admin-header-lock-input").val();
+        if(pwd == ''){
             layer.msg("请输入解锁密码！");
             $(this).siblings(".admin-header-lock-input").focus();
         }else{
-            if($(this).siblings(".admin-header-lock-input").val() == "123456"){
-                window.sessionStorage.setItem("lockcms",false);
-                $(this).siblings(".admin-header-lock-input").val('');
-                layer.closeAll("page");
-            }else{
-                layer.msg("密码错误，请重新输入！");
-                $(this).siblings(".admin-header-lock-input").val('').focus();
-            }
+            $.get('/index.php/worker/unlock',{
+                pwd : pwd
+            },function(res){
+                if(isRealNum(res.code)) {
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1000});
+                        $(this).siblings(".admin-header-lock-input").val('').focus();
+                    } else {
+                        window.sessionStorage.setItem("lockcms", false);
+                        $(this).siblings(".admin-header-lock-input").val('');
+                        layer.closeAll("page");
+                    }
+                }else{
+                    layer.msg('登录超时，请重新登录', {time: 1000});
+                    setTimeout(function(){
+                        window.location.reload();
+                    },1000);
+                }
+            })
         }
     });
     $(document).on('keydown', function(event) {
@@ -108,4 +119,16 @@ layui.use(['form','jquery',"layer"],function() {
         menu = [];
         window.sessionStorage.removeItem("curmenu");
     })
+
+    function isRealNum(val){
+        // 先判定是否为number
+        if(typeof val !== 'number'){
+            return false;
+        }
+        if(!isNaN(val)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 })

@@ -13,9 +13,9 @@
 	<link rel="icon" href="favicon.ico">
 	<link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_400842_q6tk84n9ywvu0udi.css" media="all" >
 	{include file="layout/static"}
-	<link rel="stylesheet" type="text/css" href="/static/css/index.css" media="all" >
+	<link rel="stylesheet" type="text/css" href="/static/css/index.css?1" media="all" >
 	<script type="text/javascript" src="/static/js/index.js?1"></script>
-	<script type="text/javascript" src="/static/js/cache.js"></script>
+	<script type="text/javascript" src="/static/js/cache.js?2"></script>
 	<style>
 		.layui-icon{ font-size:16px !important;}
 		.mag0{ margin:0 !important; }
@@ -37,12 +37,13 @@
 			    <ul class="layui-nav top_menu">
 					<li class="layui-nav-item lockcms" pc>
 						<a href="javascript:;"><i class="seraph icon-lock"></i><cite>锁屏</cite></a>
+						<span style="display: none" id="is_lock_screen">{$is_unlock}</span>
 					</li>
 					<li class="layui-nav-item" id="userInfo">
 						<a href="javascript:;"><cite class="adminName">{$admin}</cite></a>
 						<dl class="layui-nav-child">
-							<dd><a href="javascript:;" data-url="page/user/userInfo.html"><i class="seraph icon-ziliao" data-icon="icon-ziliao"></i><cite>个人资料</cite></a></dd>
-							<dd><a href="javascript:;" data-url="page/user/changePwd.html"><i class="seraph icon-xiugai" data-icon="icon-xiugai"></i><cite>修改密码</cite></a></dd>
+							<dd><a href="javascript:;" data-url="index.php/worker/info"><i class="seraph icon-ziliao" data-icon="icon-ziliao"></i><cite>个人资料</cite></a></dd>
+							<dd><a href="javascript:;" data-url="index.php/worker/password"><i class="seraph icon-xiugai" data-icon="icon-xiugai"></i><cite>修改密码</cite></a></dd>
 							<dd><a href="javascript:;" class="showNotice"><i class="layui-icon">&#xe645;</i><cite>系统公告</cite><span class="layui-badge-dot"></span></a></dd>
 							<dd><a href="/index.php/index/loginOut" class="signOut"><i class="seraph icon-tuichu"></i><cite>退出</cite></a></dd>
 						</dl>

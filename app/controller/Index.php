@@ -11,6 +11,7 @@ class Index extends BaseAdmin
         $data = [
             'admin' => $user['name'],
             'uid' => $user['id'],
+            'is_unlock' => $user['lock_screen'] ? 'lock' : '',
         ];
         View::assign($data);
         return View::fetch();
