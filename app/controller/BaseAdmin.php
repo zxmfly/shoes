@@ -15,6 +15,7 @@ use app\model\Users;
 use think\App;
 use think\facade\Config;
 use think\facade\Session;
+use think\facade\View;
 
 class BaseAdmin extends BaseController
 {
@@ -22,6 +23,8 @@ class BaseAdmin extends BaseController
     public $_admin = [];
     public $_pageArr = [];
     public $_pageDefault = 20;
+    public $_menu = [];
+    public $checkArr = [];
     public function __construct(App $app)
     {
         parent::__construct($app);
@@ -44,8 +47,16 @@ class BaseAdmin extends BaseController
                     'role_id' => 0,
                 ];
             }
+            $this->_admin = $admin;
             Session::set('adminInfo', $admin);
         }
+        $this->_menu = Session::get('adminMenu');
+        $this->checkArr = Session::get('adminCheckArr');
+        if(empty($this->_menu) || empty($this->checkArr)) self::getMenu();
+        $data = [
+            'role_id' => $this->_admin['role_id'],
+        ];
+        View::assign($data);
 
     }
     //订单追踪
@@ -68,4 +79,19 @@ class BaseAdmin extends BaseController
     }
 
     //权限设置
+    private function getMenu(){
+        $list = [];
+        $checkArr = [];
+        $menu = Config::get('menu');
+        foreach ($menu as $pid => $row){
+            $checkArr[$row['url']] = $pid;
+            isset($row['title_class']) && $list[$row['title']]['title_class'] = $row['title_class'];
+            isset($row['title_icon']) && $list[$row['title']]['title_icon'] = $row['title_icon'];
+            $list[$row['title']]['lists'][] = $row;
+        }
+        $this->_menu = $list;
+        $this->checkArr = $checkArr;
+        Session::set('adminMenu', $list);
+        Session::set('adminCheckArr', $checkArr);
+    }
 }

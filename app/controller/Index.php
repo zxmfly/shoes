@@ -12,7 +12,9 @@ class Index extends BaseAdmin
             'admin' => $user['name'],
             'uid' => $user['id'],
             'is_unlock' => $user['lock_screen'] ? 'lock' : '',
+            'menu' => $this->_menu,
         ];
+
         View::assign($data);
         return View::fetch();
     }

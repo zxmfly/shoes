@@ -55,41 +55,15 @@
 		<div class="layui-side layui-bg-black">
 			<div class="navBar layui-side-scroll" id="navBar">
 				<ul class="layui-nav layui-nav-tree">
-					<li class="layui-nav-item layui-nav-itemed"><a><i class="seraph icon-icon10" data-icon="icon-icon10"></i><cite>员工管理</cite><span class="layui-nav-more"></span></a>
+					{foreach $menu as $title => $list}
+					<li class="layui-nav-item layui-nav-itemed"><a><i class="{$list.title_class ? 'seraph' : 'layui-icon'} {$list.title_icon}" data-icon="{$list.title_icon}"></i><cite>{$title}</cite><span class="layui-nav-more"></span></a>
 						<dl class="layui-nav-child">
-							<dd><a data-url="index.php/worker/"><i class="layui-icon layui-icon-user" data-icon="layui-icon-user"></i><cite>员工列表</cite></a></dd>
-							<dd><a data-url="index.php/worker/work" ><i class="layui-icon layui-icon-template-1" data-icon="layui-icon-template-1"></i><cite>工作部门</cite></a></dd>
+							{foreach $list['lists'] as $m}
+							<dd><a data-url="index.php/{$m.url}"><i class="{$m.class ? 'seraph' : 'layui-icon'} {$m.icon}" data-icon="{$m.icon}"></i><cite>{$m.name}</cite></a></dd>
+							{/foreach}
 						</dl>
 					</li>
-
-
-					<li class="layui-nav-item layui-nav-itemed"><a><i class="layui-icon layui-icon-friends" data-icon="layui-icon-friends"></i><cite>员工中心</cite><span class="layui-nav-more"></span></a>
-						<dl class="layui-nav-child">
-							<dd><a data-url="index.php/task/index?action=myTask"><i class="seraph icon-caidan" data-icon="icon-caidan"></i><cite>我的任务</cite></a></dd>
-							<dd><a data-url="index.php/worker/info" ><i class="seraph icon-ziliao" data-icon="icon-ziliao"></i><cite>个人资料</cite></a></dd>
-							<dd><a data-url="index.php/worker/password" ><i class="seraph icon-xiugai" data-icon="icon-xiugai"></i><cite>修改密码</cite></a></dd>
-						</dl>
-					</li>
-
-
-					<li class="layui-nav-item layui-nav-itemed"><a><i class="layui-icon layui-icon-form" data-icon="layui-icon-form"></i><cite>订单管理</cite><span class="layui-nav-more"></span></a>
-						<dl class="layui-nav-child">
-							<dd><a data-url="index.php/task/fix"><i class="layui-icon layui-icon-link" data-icon="layui-icon-link"></i><cite>维修类别</cite></a></dd>
-							<dd><a data-url="index.php/order/addOrder"><i class="layui-icon layui-icon-add-circle" data-icon="layui-icon-add-circle"></i><cite>添加订单</cite></a></dd>
-							<dd><a data-url="index.php/order/"><i class="seraph icon-text" data-icon="icon-text"></i><cite>订单列表</cite></a></dd>
-							<dd><a data-url="index.php/task/"><i class="layui-icon layui-icon-util" data-icon="layui-icon-util"></i><cite>任务列表</cite></a></dd>
-							<dd><a data-url="index.php/task/check"><i class="layui-icon layui-icon-util" data-icon="layui-icon-util"></i><cite>待审列表</cite></a></dd>
-							<dd><a data-url="index.php/task/send"><i class="layui-icon layui-icon-util" data-icon="layui-icon-util"></i><cite>待发列表</cite></a></dd>
-						</dl>
-					</li>
-
-
-					<li class="layui-nav-item layui-nav-itemed"><a><i class="layui-icon layui-icon-set" data-icon="layui-icon-set"></i><cite>系统管理</cite><span class="layui-nav-more"></span></a>
-						<dl class="layui-nav-child">
-							<dd><a data-url="index.php/group/"><i class="layui-icon layui-icon-auz" data-icon="layui-icon-auz"></i><cite>权限列表</cite></a></dd>
-							<dd><a data-url="index.php/notice/"><i class="layui-icon layui-icon-notice" data-icon="layui-icon-notice"></i><cite>公告列表</cite></a></dd>
-						</dl>
-					</li>
+					{/foreach}
 				</ul>
 			</div>
 		</div>
