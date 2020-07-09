@@ -170,8 +170,12 @@ class Worker extends BaseAdmin
         $admin = $this->_admin;
         if(Request::isGet()) {
             $id = $admin['id'];
-            $data = Users::getAll(['id' => $id]);
-            $info = $data['data'][0];
+            if($id) {
+                $data = Users::getAll(['id' => $id]);
+                $info = $data['data'][0];
+            }else{
+                return '超级管理员';
+            }
             View::assign($info);
             return View::fetch();
         }elseif(Request::isPost()){
@@ -189,6 +193,9 @@ class Worker extends BaseAdmin
 
     public function password(){
         $admin = $this->_admin;
+        if($admin['id'] == 0){
+            return '超级管理员密码，不可修改';
+        }
         if(Request::isGet()) {
             $data = [
                 'admin' => $admin['user_name'],

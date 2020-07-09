@@ -14,7 +14,7 @@ use think\facade\View;
 class Log extends BaseController
 {
     public function index(){
-        
+
         return View::fetch();
     }
 }

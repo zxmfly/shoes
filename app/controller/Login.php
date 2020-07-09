@@ -56,6 +56,7 @@ class Login extends BaseController
                 'user_name' => $app['ROOT'],
                 'name' => '超级管理员',
                 'role_id' => 0,
+                'lock_screen' => 'root123'
             ];
         }else{
             return json(getRs(3, '账号或密码错误'));

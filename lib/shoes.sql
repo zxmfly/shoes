@@ -176,4 +176,15 @@ CREATE TABLE `ch_works`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = MyISAM CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
+-- ----------------------------
+-- Table structure for ch_groups
+-- ----------------------------
+DROP TABLE IF EXISTS `ch_groups`;
+CREATE TABLE `ch_groups` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
+  `lists` varchar(1000) NOT NULL DEFAULT '' COMMENT '功能列表',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='权限列表';
+
 SET FOREIGN_KEY_CHECKS = 1;

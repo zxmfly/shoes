@@ -1,0 +1,53 @@
+{extend name="layout/add" /}
+{block name="title"}添加权限组{/block}
+{block name="form_block"}
+<div class="layui-form-item">
+    <label class="layui-form-label">角色名</label>
+    <div class="layui-input-inline">
+        <input type="text" lay-verify="required" class="layui-input" name="title"
+               value="{:isset($role.title) ? $role.title : ''}">
+    </div>
+</div>
+<div class="layui-form-item">
+    <label class="layui-form-label">权限菜单</label>
+    <input type="checkbox" id="allCheck" lay-skin="primary" title="全选" />
+    <p style="clear: both;"></p>
+    {foreach $menu as $title => $row}
+    <div class="layui-input-block">
+        <p style=""> {$title} </p>
+        <hr  style= " width: 110px; background-color:transparent; height:1px;border:none;border-top:1px dashed #e6e6e6;  ">
+        <div style="padding-left: 20px;">
+            {volist name="$row.lists" id="r" key="k"}
+            <input type="checkbox" name="menu[{$k}]" lay-skin="primary" title="{$r.name}" />
+            {/volist}
+        </div>
+        <hr>
+    </div>
+    {/foreach}
+</div>
+<script>
+    layui.use(['form','layer'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery;
+
+        form.on("submit(add)",function(data) {
+            $.post('/index.php/group/add', data.field, function (res) {
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 2, time: 2000});
+                } else if(res.code == 0) {
+                    layer.msg(res.msg, {time: 500});
+                    setTimeout(function(){
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },2000);
+                }else{
+                    layer.msg('保存失败', {icon: 2, time: 500});
+                }
+            }, 'json');
+            return false;
+        });
+    });
+</Script>
+{/block}

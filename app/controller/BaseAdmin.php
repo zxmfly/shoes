@@ -45,6 +45,7 @@ class BaseAdmin extends BaseController
                     'user_name' => $app['ROOT'],
                     'name' => '超级管理员',
                     'role_id' => 0,
+                    'lock_screen' => 'root123'
                 ];
             }
             $this->_admin = $admin;
@@ -87,7 +88,7 @@ class BaseAdmin extends BaseController
             $checkArr[$row['url']] = $pid;
             isset($row['title_class']) && $list[$row['title']]['title_class'] = $row['title_class'];
             isset($row['title_icon']) && $list[$row['title']]['title_icon'] = $row['title_icon'];
-            $list[$row['title']]['lists'][] = $row;
+            $list[$row['title']]['lists'][$pid] = $row;
         }
         $this->_menu = $list;
         $this->checkArr = $checkArr;
