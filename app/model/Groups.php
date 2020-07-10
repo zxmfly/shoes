@@ -20,7 +20,13 @@ class Groups extends Model
         $menu = Config::get('menu');
 
         foreach ($lists as &$row){
-
+            $menus = [];
+            $list = [];
+            $menus = explode(',', $row['lists']);
+            foreach ($menus as $r){
+                $list[] = "<span style='background: #5FB878;' class=\"layui-btn layui-btn-sm\">{$menu[$r]['name']}</span>";
+            }
+            $row['lists'] = implode('', $list);
         }
         $data['data'] = $lists;
         return $data;

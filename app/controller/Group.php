@@ -25,7 +25,9 @@ class Group extends BaseAdmin
 
     public function getList(){
         $param = Request::param();
-        $where = [];
+        $gid = $this->_admin['role_id'];
+        $uid = $this->_admin['id'];
+        $where = "( `id` = {$gid} OR `uid` = {$uid} )";
 
         $page = isset($param['page']) ? $param['page'] : 1;
         $limit = isset($param['limit']) ? $param['limit'] : $this->_pageDefault;
@@ -40,12 +42,50 @@ class Group extends BaseAdmin
     }
 
     public function add(){
+        $param = Request::param();
+        if(Request::isGet()) {
+            $lists = [];
+            if(isset($param['id']) && intval($param['id'])){
+                $id = intval($param['id']);
+                $group = Groups::find($id);
+                $lists = explode(',', $group['lists']);
+            }
+            $data = [
+                'menu' => $this->_menu,
+                'lists' => $lists,
+            ];
+            View::assign($data);
+            return View::fetch();
+        }else{
+            $id = intval($param['id']);
+            $menu = $param['menu'];
+            unset($param['menu']);
+            $param['lists'] = implode(',', $menu);
+            if($id){
+                Groups::update($param);
+            }else {
+                unset($param['id']);
+                $admin = $this->_admin;
+                $param['uid'] = $admin['id'];
+                Groups::insert($param);
+            }
 
-        $data = [
-            'menu' => $this->_menu,
-        ];
+            return json(getRs(0,'保存成功'));
+        }
+    }
 
-        View::assign($data);
-        return View::fetch();
+    public function del(){
+        if(Request::param('id')) {
+            $id = Request::param('id');
+            $delete = Groups::destroy($id);
+            if($delete){
+                $rs = ['code'=>0,'msg'=>'删除成功'];
+            }else{
+                $rs = ['code'=>1,'msg'=>'删除失败'];
+            }
+        }else{
+            $rs = ['code'=>3,'msg'=>'操作有误'];
+        }
+        return json($rs);
     }
 }

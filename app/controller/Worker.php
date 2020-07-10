@@ -8,6 +8,7 @@
 namespace app\controller;
 
 
+use app\model\Groups;
 use app\model\Works;
 use think\facade\Request;
 use think\facade\Session;
@@ -51,7 +52,8 @@ class Worker extends BaseAdmin
         $data = Request::param();
         if(empty($data)){
             $work = Works::select()->toArray();
-            $data = compact('work');
+            $groups = Groups::select()->toArray();
+            $data = compact('work','groups');
             View::assign($data);
             return View::fetch();
         }

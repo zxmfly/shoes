@@ -10,6 +10,7 @@ namespace app\controller;
 
 
 use app\BaseController;
+use app\model\Groups;
 use app\model\Tracks;
 use app\model\Users;
 use think\App;
@@ -53,7 +54,7 @@ class BaseAdmin extends BaseController
         }
         $this->_menu = Session::get('adminMenu');
         $this->checkArr = Session::get('adminCheckArr');
-        if(empty($this->_menu) || empty($this->checkArr)) self::getMenu();
+        if(empty($this->_menu) || empty($this->checkArr)) self::getMenu($this->_admin['role_id']);
         $data = [
             'role_id' => $this->_admin['role_id'],
         ];
@@ -80,16 +81,36 @@ class BaseAdmin extends BaseController
     }
 
     //权限设置
-    private function getMenu(){
+    private function getMenu($gid){
+        if($gid > 0) {
+            $my_menus = Groups::find($gid);
+            if(empty($my_menus)){
+                echo  '没有使用权限，请找系统管理员';
+                die;
+            }
+            $my_lists = explode(',', $my_menus['lists']);
+        }
         $list = [];
         $checkArr = [];
         $menu = Config::get('menu');
+        $titleArr = [];
         foreach ($menu as $pid => $row){
+            isset($row['title_class']) && $titleArr[$row['title']]['title_class'] = $row['title_class'];
+            isset($row['title_icon']) && $titleArr[$row['title']]['title_icon'] = $row['title_icon'];
+            if($gid > 0 && !in_array($pid, $my_lists)) continue;
             $checkArr[$row['url']] = $pid;
-            isset($row['title_class']) && $list[$row['title']]['title_class'] = $row['title_class'];
-            isset($row['title_icon']) && $list[$row['title']]['title_icon'] = $row['title_icon'];
             $list[$row['title']]['lists'][$pid] = $row;
         }
+        if(empty($list)){
+            echo  '没有使用权限，请找系统管理员';
+            die;
+        }else{
+            foreach ($list as $key=>&$val){
+                isset($titleArr[$key]['title_class']) && $val['title_class'] = $titleArr[$key]['title_class'];
+                $val['title_icon'] = $titleArr[$key]['title_icon'];
+            }
+        }
+
         $this->_menu = $list;
         $this->checkArr = $checkArr;
         Session::set('adminMenu', $list);

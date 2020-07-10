@@ -19,10 +19,12 @@ class Users extends Model
         $dict = getDict();
         $work = Works::select()->toArray();
         $workArr = getByIndex($work, 'id', 'work');
+        $groups = Groups::select()->toArray();
+        $group = getByIndex($groups,'id', 'name');
         foreach ($lists as &$row){
             $row['sex_text'] = $dict['sex'][$row['sex']];
             $row['work_text'] = $workArr[$row['work_id']];
-            $row['role_text'] = $dict['role'][$row['role_id']];
+            $row['role_text'] = isset($group[$row['role_id']]) ? $group[$row['role_id']] : '';
             $row['status_text'] = $dict['status'][$row['status']];
         }
         $data['data'] = $lists;

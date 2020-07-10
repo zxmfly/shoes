@@ -27,22 +27,23 @@
                 {field: 'id', title: 'ID', width:50, align:"center"},
                 {field: 'name', title: '权限组名', width:100, align:'center'},
                 {field: 'lists', title: '功能列表',  align:'center'},
-                {title: '操作', minWidth:110, templet:'#listBar',fixed:"right",align:"center"}
+                {title: '操作', width:100, templet:'#listBar',fixed:"right",align:"center"}
             ]]
         });
 
         //添加
         function add(edit){
+            var id = 0;
+            if(edit) id = edit.id;
             var index = layui.layer.open({
                 title : "添加",
                 type : 2,
-                content : "/index.php/group/add",
+                content : "/index.php/group/add?id="+id,
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     if(edit){
-                        body.find(".work_id_text").text(edit.id);
-                        body.find(".work_id").val(edit.id);  //工号
-                        body.find(".work").val(edit.work);  //工号
+                        body.find(".name").val(edit.name);
+                        body.find("#group_id").val(edit.id);
                         form.render();
                     }
                     setTimeout(function(){
@@ -73,8 +74,8 @@
                 for (var i in data) {
                     id.push(data[i].id);
                 }
-                layer.confirm('确定删除选中的工作类别？', {icon: 3, title: '提示信息'}, function (index) {
-                    $.get("/index.php/worker/delWork",{
+                layer.confirm('确定删除权限组？', {icon: 3, title: '提示信息'}, function (index) {
+                    $.get("/index.php/group/del",{
                         id : id
                     },function(res){
                         if (res.code > 0) {
@@ -89,7 +90,7 @@
                     })
                 })
             }else{
-                layer.msg("请选择需要删除的工作类别");
+                layer.msg("请选择需要删除权限组");
             }
         })
 
@@ -100,8 +101,8 @@
             if(layEvent === 'edit'){ //编辑
                 add(data);
             }else if(layEvent === 'del'){ //删除
-                layer.confirm('确定删除工作类别？',{icon:3, title:'提示信息'},function(index){
-                    $.get('/index.php/worker/delWork',{
+                layer.confirm('确定删除权限组？',{icon:3, title:'提示信息'},function(index){
+                    $.get('/index.php/group/del',{
                         id : data.id
                     },function(res){
                         if (res.code > 0) {

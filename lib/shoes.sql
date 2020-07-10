@@ -184,6 +184,7 @@ CREATE TABLE `ch_groups` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
   `lists` varchar(1000) NOT NULL DEFAULT '' COMMENT '功能列表',
+  `uid` int(11) unsigned DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='权限列表';
 
