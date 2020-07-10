@@ -122,6 +122,7 @@ class Order extends BaseAdmin
         unset($param['customer_keywords'],$param['name'],$param['phone_number'],$param['address'],$param['postal_code']);
         $param['order_id'] = date('YmdHis').rand(1000, 9999);
         $param['status'] = 0;
+        $param['create_time'] = time();
         $result = Orders::insertGetId($param);
         if($result){
             if(!$this->addTrack($param)){

@@ -27,7 +27,7 @@ class Orders extends Model
             $row['order_type'] = $row['repair_order'] ? '返修' : '新增';
             $task = Tasks::where(['order_id'=>$row['order_id']])->find();
             $row['task_id'] = $task ? $task['id'] : '';
-            $row['send_time'] && $row['send_time'] = date('Y-m-d H:i:s', $row['send_time']);
+            $row['send_time'] = $row['finish_time'] ? date('Y-m-d H:i:s', $row['send_time']) : '';
         }
         $data['data'] = $lists;
         return $data;
