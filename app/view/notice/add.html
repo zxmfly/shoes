@@ -1,0 +1,69 @@
+{extend name="layout/add" /}
+{block name="title"}添加公告{/block}
+{block name="form_block"}
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">ID</label>
+    <div class="layui-input-inline">
+        <input type="hidden" name="id" class="layui-input notice_id" value="">
+        <div class="layui-form-mid layui-word-aux notice_id_text"></div>
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">开始时间</label>
+    <div class="layui-input-inline">
+        <input type="text" value="{$start_time}" name="start_time" class="layui-input start_time" lay-verify="required" placeholder="开始时间">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">结束时间</label>
+    <div class="layui-input-inline">
+        <input type="text" value="{$end_time}"  name="end_time" class="layui-input end_time" lay-verify="required" placeholder="结束时间">
+    </div>
+</div>
+<div class="layui-form-item">
+    <label class="layui-form-label">展示与否</label>
+    <div class="layui-input-block">
+        <input type="checkbox" class="is_show"  checked="" name="is_show" lay-skin="switch" lay-filter="switchTest" lay-text="ON|OFF">
+    </div>
+</div>
+<div class="layui-form-item layui-row ">
+    <label class="layui-form-label">内容</label>
+    <div class="layui-input-inline content">
+        <textarea  class="layui-textarea content" lay-verify="required" name="content"></textarea>
+    </div>
+</div>
+<script>
+    layui.use(['form','layer', 'laydate'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            laydate = layui.laydate;
+
+        //日期
+        laydate.render({
+            elem: '.start_time'
+        });
+        laydate.render({
+            elem: '.end_time'
+        });
+
+        form.on("submit(add)",function(data) {
+            $.post('/index.php/notice/add', data.field, function (res) {
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 2, time: 2000});
+                } else if(res.code == 0) {
+                    layer.msg(res.msg, {time: 500});
+                    setTimeout(function(){
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },2000);
+                }else{
+                    layer.msg('保存失败', {icon: 2, time: 500});
+                }
+            }, 'json');
+            return false;
+        });
+    });
+</Script>
+{/block}

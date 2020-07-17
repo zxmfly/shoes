@@ -35,13 +35,16 @@
     <a class="layui-btn layui-btn-xs" lay-event="add_task">入库</a>
     {{#  } }}
     <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="order_track">追踪</a>
-    {{#  if(d.status === 7 || d.status === 9){ }}
+    {{#  if(d.status === 5){ }}
     <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="order_repair">返修</a>
     {{#  } }}
     <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
 </script>
 {/block}
 {block name="table"}
+<style>
+    .layui-table-cell {padding: 0 5px!important; text-align: center;}
+</style>
 <table id="list" lay-filter="list"></table>
 <script type="text/javascript">
     layui.use(['layer','form','table','laydate'],function(){
@@ -116,6 +119,7 @@
                 content : "/index.php/order/addOrder",
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
+                    body.find("#listAdd").text('list_add');
                     if(edit){
                         var customer = edit.customer_info;
                         body.find(".order_type option[value="+order_type+"]").attr("selected",true);
@@ -210,7 +214,7 @@
             }else if(layEvent === 'order_track'){
                 openTarck(data, '订单追踪');
             }else if(layEvent === 'order_repair'){
-                if(data.status != 7 || data.status != 9){
+                if(data.status != 5){
                     layer.msg('订单还没有完成，不能进行返修操作', {icon: 7, time: 2000});
                     return false;
                 }

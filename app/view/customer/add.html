@@ -1,0 +1,54 @@
+{extend name="layout/add" /}
+{block name="title"}添加客户{/block}
+{block name="form_block"}
+<input type="hidden" name="id" class="id" value="">
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">姓名</label>
+    <div class="layui-input-inline">
+        <input type="text" name="name" placeholder="请输入姓名" lay-verify="required" class="layui-input name" value="">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-col-xs12">
+    <label class="layui-form-label">电话</label>
+    <div class="layui-input-inline">
+        <input type="text" name="phone_number" placeholder="请输入电话/手机号" lay-verify="required|number|phone" class="layui-input phone_number" value="">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-form-text layui-col-xs12">
+    <label class="layui-form-label">邮编</label>
+    <div class="layui-input-inline">
+        <input type="text" name="postal_code" placeholder="请输入邮编" class="layui-input postal_code" value="">
+    </div>
+</div>
+<div class="layui-form-item layui-row layui-form-text layui-col-xs12">
+    <label class="layui-form-label">地址</label>
+    <div class="layui-input-inline">
+        <textarea placeholder="请输入地址" class="layui-textarea address" lay-verify="required" name="address"></textarea>
+    </div>
+</div>
+<script>
+    layui.use(['form','layer'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery;
+
+        form.on("submit(add)",function(data) {
+            $.post('/index.php/customer/add', data.field, function (res) {
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 2, time: 2000});
+                } else if(res.code == 0) {
+                    layer.msg(res.msg, {time: 1000});
+                    setTimeout(function(){
+                        layer.closeAll("iframe");
+                        //刷新父页面
+                        parent.location.reload();
+                    },1000);
+                }else{
+                    layer.msg('保存失败', {icon: 2, time: 500});
+                }
+            }, 'json');
+            return false;
+        });
+    });
+</Script>
+{/block}

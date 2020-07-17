@@ -114,6 +114,7 @@
     <span class="layui-layer-resize" style="top:15px; right: 40px;"><a id="resetList" href="javascript:;" style="color: #FFF!important;" class="layui-icon layui-icon-refresh-3"></a></span>
     <span class="layui-layer-setwin"><a id="closeList" style="top:-3px;  font-size: 20px; color: #FFF!important;"  class="layui-icon layui-icon-close" href="javascript:;"></a></span>
 </div>
+<p id="listAdd" style="display: none;"></p>
 
 <script>
     layui.use(['form','layer'],function(){
@@ -121,13 +122,22 @@
             layer = layui.layer,
             $ = layui.jquery;
         var py = 38;
+        var p = $('#listAdd').text();
         form.on("submit(add)",function(data) {
             $.post('/index.php/order/addOrder', data.field, function (res) {
                 if (res.code > 0) {
                     layer.msg(res.msg, {icon: 2, time: 1000});
                 } else if(res.code == 0) {
-                    layer.msg(res.msg, {time: 500});
-                    document.getElementById("addFrom").reset();
+                    layer.msg(res.msg, {time: 1000});
+                    if(p == 'list_add'){
+                        setTimeout(function(){
+                            layer.closeAll("iframe");
+                            //刷新父页面
+                            parent.location.reload();
+                        },1000);
+                    } else {
+                        document.getElementById("addFrom").reset();
+                    }
                 }
             }, 'json');
             return false;

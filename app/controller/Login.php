@@ -9,6 +9,7 @@ namespace app\controller;
 
 
 use app\BaseController;
+use app\model\SystemLogs;
 use app\model\Users;
 use think\facade\Config;
 use think\facade\Request;
@@ -65,7 +66,24 @@ class Login extends BaseController
 
         Session::Set('shoesAdmin', $all['user_name']);
         Session::set('adminInfo', $admin);
+        if($admin['id'] > 0) $this->setLoginLog($admin);
 
         return json(getRs(0,'登录成功'));
     }
+
+    //操作记录
+    public function setLoginLog($admin){
+        $control = Request::controller();
+        $action = Request::action();
+        $operator_id = $admin['id'];
+        $operator  = $admin['name'];
+        $url = Request::url(true);//true 获取完整的url
+        $ip = Request::ip();
+
+        $create_time = time();
+
+        $data = compact('url', 'ip', 'operator_id', 'operator', 'create_time','control','action');
+        SystemLogs::insert($data);
+    }
+
 }

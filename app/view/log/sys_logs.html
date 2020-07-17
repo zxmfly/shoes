@@ -1,0 +1,33 @@
+{extend name="layout/list" /}
+{block name="title"}系统日志{/block}
+{block name="header"}{/block}
+{block name="table"}
+<table id="sysLogs" lay-filter="sysLogs"></table>
+<script type="text/javascript">
+    layui.use(['table'],function(){
+        var table = layui.table;
+
+        //系统日志
+        table.render({
+            elem: '#sysLogs',
+            url : '/index.php/log/getListSys',
+            cellMinWidth : 95,
+            page : true,
+            height : "full-20",
+            limits : {$page_list},
+            limit : {$page_defult},
+            id : "systemLog",
+            cols : [[
+                {field: 'create_time', title: '操作时间', align:'center', width:170},
+                {field: 'operator',title: '操作人', width:100, align:"center"},
+                {field: 'ip', title: '操作IP',  align:'center',width:130},
+                {field: 'control', title: '控制器',  align:'center',width:100},
+                {field: 'action', title: '方法',  align:'center',width:100},
+                {field: 'url', title: '请求地址', minWidth:400, align:"left"}
+            ]]
+        });
+
+    })
+
+</script>
+{/block}

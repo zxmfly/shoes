@@ -19,10 +19,6 @@ class Index extends BaseAdmin
         return View::fetch();
     }
 
-    public function admin(){
-        return View::fetch();
-    }
-
     public function welcome(){
         $user = $this->_admin;
         $data = [

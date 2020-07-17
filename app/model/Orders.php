@@ -22,8 +22,9 @@ class Orders extends Model
             $row['channel'] = $dict['channel'][$row['channel_id']];
             $row['status_txt'] = $dict['order_status'][$row['status']];
             $row['finish_time'] = $row['finish_time'] ? date('Y-m-d H:is', $row['finish_time']) : '';
-            $row['customer_info'] = Customers::find($row['customer_id']);
-            $row['customer'] = $row['customer_info']['name'];
+            $customer = Customers::find($row['customer_id']);
+            $row['customer_info'] = $customer ? $customer : [];
+            $row['customer'] = $customer ? $row['customer_info']['name'] : '';
             $row['order_type'] = $row['repair_order'] ? '返修' : '新增';
             $task = Tasks::where(['order_id'=>$row['order_id']])->find();
             $row['task_id'] = $task ? $task['id'] : '';

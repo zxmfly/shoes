@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>系统公告</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    {include file="layout/static"}
+</head>
+<body>
+    <div class="layui-carousel" id="test1" lay-filter="test1" style="border-bottom:1px solid #e2e2e2;">
+        <div carousel-item="">
+            {foreach $notices as $v}
+            <div><p style="padding:15px 20px; text-align:justify; line-height: 22px; text-indent:2em;">{$v.content}</p></div>
+            {/foreach}
+        </div>
+    </div>
+</body>
+<script>
+    layui.use(['carousel', 'form'], function() {
+        var carousel = layui.carousel
+            , form = layui.form;
+
+        //常规轮播
+        carousel.render({
+            elem: '#test1'
+            , arrow: 'always'
+            ,width: '360px'
+            ,height: '200px'
+            ,arrow: 'hover'
+        });
+    });
+</script>
+</html>

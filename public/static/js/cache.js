@@ -4,26 +4,47 @@ layui.use(['form','jquery',"layer"],function() {
         $ = layui.jquery,
         layer = parent.layer === undefined ? layui.layer : top.layer;
 
+    function checkNotice(){
+        var f;
+        $.ajax({
+            type: "get",
+            url: '/index.php/notice/getNotice?action=checkNotice',
+            async: false, //设为false就是同步请求
+            cache: false,
+            success: function (res) {
+                if(res.code > 0){
+                    f = 1;
+                }else{
+                    f = 0;
+                }
+            }
+        });
+
+        return f;
+    }
+
     //判断是否处于锁屏状态【如果关闭以后则未关闭浏览器之前不再显示】
     if(window.sessionStorage.getItem("lockcms") != "true" && window.sessionStorage.getItem("showNotice") != "true"){
-        showNotice();
+        if(checkNotice()) {
+            showNotice();
+        }
     }
 
     //公告层
     function showNotice(){
-        //可以通过js判断
         layer.open({
-            type: 1,
+            type: 2,
             title: "系统公告",
-            area: '300px',
-            shade: 0.8,
-            id: 'LAY_layuipro',
-            btn: ['火速围观'],
+            area: ['360px', '301px'],
+            btn: ['收到'],
             moveType: 1,
-            content: '<div style="padding:15px 20px; text-align:justify; line-height: 22px; text-indent:2em;border-bottom:1px solid #e2e2e2;">系统还在完善中……</div>',
+            shade: 0.8,
+            content: '/index.php/notice/getNotice',
             success: function(layero){
                 var btn = layero.find('.layui-layer-btn');
-                btn.css('text-align', 'center');
+                btn.css('position', 'absolute');
+                btn.css('top', '240px');
+                btn.css('left', '120px');
                 btn.on("click",function(){
                     tipsShow();
                 });
@@ -43,13 +64,17 @@ layui.use(['form','jquery',"layer"],function() {
         }
     }
     $(".showNotice").on("click",function(){
+         if(!checkNotice()){
+             layer.msg("暂无公告!",{time:1000});
+             return false;
+         }
         showNotice();
     })
 
     //锁屏
     function lockPage(){
         if($('#is_lock_screen').text() != 'lock'){
-            layer.msg("请先设置锁屏密码，再来锁屏吧！");
+            layer.msg("请先设置锁屏密码，再来锁屏吧！",{time:1000});
             return false;
         }
 

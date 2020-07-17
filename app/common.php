@@ -5,7 +5,7 @@ if(!function_exists('getDict')) {
     function getDict($key = '') : array
     {
         $dict = [
-            'page' => [20, 50, 100, 200],
+            'page' => [18, 50, 100, 200],
             'status' => [
                 0 => '正常',
                 1 => '封禁'

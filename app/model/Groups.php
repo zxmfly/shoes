@@ -24,6 +24,7 @@ class Groups extends Model
             $list = [];
             $menus = explode(',', $row['lists']);
             foreach ($menus as $r){
+                if(!isset($menu[$r]['name'])) continue;
                 $list[] = "<span style='background: #5FB878;' class=\"layui-btn layui-btn-sm\">{$menu[$r]['name']}</span>";
             }
             $row['lists'] = implode('', $list);

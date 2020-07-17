@@ -1,0 +1,105 @@
+{extend name="layout/list" /}
+{block name="title"}客户列表{/block}
+{block name="header"}
+<blockquote class="layui-elem-quote quoteBox" >
+    <form class="layui-form">
+        <div class="layui-inline">
+            <a class="layui-btn layui-btn-normal addNews_btn">添加</a>
+        </div>
+    </form>
+</blockquote>
+{/block}
+{block name="table"}
+<table id="custList" lay-filter="custList"></table>
+<script type="text/javascript">
+    layui.use(['layer','form','table'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table;
+
+        var listId = 'custList';//对应列表的唯一ID
+
+        //用户列表
+        var tableIns = table.render({
+            elem: '#custList',
+            url : '/index.php/customer/getList',
+            cellMinWidth : 95,
+            page : true,
+            height : "full-110",
+            limits : {$page_list},
+            limit : {$page_defult},
+            id : listId,
+            //toolbar: 'true', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+            cols : [[
+                {field: 'name', title: '名字', width:80,align:"center"},
+                {field: 'phone_number', title: '电话',width:110,  align:"center"},
+                {field: 'address', title: '地址', align:"center", minWidth:200},
+                {field: 'postal_code', title:'邮编', width:85, align:"center"},
+                {field: 'create_time', title:'添加时间', width:150, align:"center"},
+                {title: '操作', width:110, templet:'#listBar',fixed:"right",align:"center"}
+            ]]
+        });
+
+        //添加工作
+        function add(edit){
+            var index = layui.layer.open({
+                title : "添加",
+                type : 2,
+                content : "/index.php/customer/add",
+                success : function(layero, index){
+                    var body = layui.layer.getChildFrame('body', index);
+                    if(edit){
+                        body.find(".id").val(edit.id);
+                        body.find(".name").val(edit.name);
+                        body.find(".phone_number").val(edit.phone_number);
+                        body.find(".postal_code").val(edit.postal_code);
+                        body.find(".address").val(edit.address);
+                        form.render();
+                    }
+                    setTimeout(function(){
+                        layui.layer.tips('点击此处返回用户列表', '.layui-layer-setwin .layui-layer-close', {
+                            tips: 3,
+                            time: 2000
+                        });
+                    },500)
+                }
+            })
+            layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
+            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+            $(window).on("resize",function(){
+                layui.layer.full(window.sessionStorage.getItem("index"));
+            })
+        }
+        $(".addNews_btn").click(function(){
+            add();
+        })
+
+        //列表操作//注：tool 是工具条事件名，userList 是 table 原始容器的属性 lay-filter="对应的值"
+        table.on('tool('+listId+')', function(obj){
+            var layEvent = obj.event,
+                data = obj.data;
+            if(layEvent === 'edit'){ //编辑
+                add(data);
+            }else if(layEvent === 'del'){ //删除
+                layer.confirm('确定删除选中客户？',{icon:3, title:'提示信息'},function(index){
+                    $.get('/index.php/customer/del',{
+                        id : data.id
+                    },function(res){
+                        if (res.code > 0) {
+                            layer.msg(res.msg, {icon: 2, time: 2000});
+                        } else {
+                            layer.msg(res.msg, {time: 500});
+                            setTimeout(function(){
+                                tableIns.reload();
+                            },500);
+                            layer.close(index);
+                        }
+                    })
+                });
+            }
+        });
+    });
+</script>
+{/block}
