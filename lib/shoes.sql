@@ -25,7 +25,7 @@ CREATE TABLE `ch_channels`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `channel` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '渠道',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '渠道列表' ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '渠道列表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for ch_checks
@@ -56,7 +56,7 @@ CREATE TABLE `ch_customers`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `name`(`name`) USING BTREE,
   INDEX `pn`(`phone_number`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户信息表' ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '客户信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for ch_fixs
@@ -66,7 +66,7 @@ CREATE TABLE `ch_fixs`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '维修类型' ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '维修类型' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for ch_groups
@@ -78,7 +78,7 @@ CREATE TABLE `ch_groups`  (
   `lists` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '功能列表',
   `uid` int(11) UNSIGNED NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '权限列表' ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '权限列表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for ch_notices
@@ -93,7 +93,7 @@ CREATE TABLE `ch_notices`  (
   `operator` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '公告表' ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '公告表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for ch_orders
@@ -118,7 +118,7 @@ CREATE TABLE `ch_orders`  (
   UNIQUE INDEX `order_id`(`order_id`) USING BTREE,
   INDEX `ct`(`create_time`) USING BTREE,
   INDEX `ft`(`finish_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单列表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单列表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for ch_sets
@@ -144,7 +144,7 @@ CREATE TABLE `ch_system_logs`  (
   `url` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '',
   `ip` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 110 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for ch_tasks
@@ -169,7 +169,7 @@ CREATE TABLE `ch_tasks`  (
   INDEX `ct`(`create_time`) USING BTREE,
   INDEX `ft`(`finish_time`) USING BTREE,
   INDEX `rep_oid`(`repair_order`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for ch_tracks
@@ -185,7 +185,7 @@ CREATE TABLE `ch_tracks`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `oid`(`order_id`) USING BTREE,
   INDEX `ut`(`create_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单追踪表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单追踪表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for ch_users
@@ -210,7 +210,7 @@ CREATE TABLE `ch_users`  (
   `urgent_phone` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '紧急联系电话',
   `lock_screen` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '锁屏密码',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for ch_works
@@ -220,6 +220,6 @@ CREATE TABLE `ch_works`  (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `work` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '名称',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;

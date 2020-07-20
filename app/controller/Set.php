@@ -38,11 +38,11 @@ class Set extends BaseAdmin
             if($keys[$id]['rule'] == 'int'){
                 $values = intval($values);
             }
-            if($sets[$id] == $values) {
+            if(isset($sets[$id]) && isset($sets[$id]) == $values) {
                 continue;
             }
 
-            Sets::update(compact('id','values'));
+            Sets::create(compact('id','values'), ['id','values'], true);//replace 写法
         }
 
         return json(getRs(0,'保存成功'));

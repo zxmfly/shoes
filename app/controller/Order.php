@@ -35,7 +35,7 @@ class Order extends BaseAdmin
         if(isset($param['customer_express']) && $param['customer_express']){
             $where[] = ['customer_express','=',$param['customer_express']];
         }
-        if(isset($param['status']) && $param['status']!= ''){
+        if(isset($param['status']) && $param['status']!= 'all'){
             $where[] = ['status', '=', $param['status']];
         }
         if(isset($param['order_id']) && $param['order_id']){

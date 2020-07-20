@@ -39,7 +39,7 @@ class Task extends BaseAdmin
     public function getList(){
         $param = Request::param();
         $where = [];
-        if(isset($param['status']) && $param['status']!= ''){
+        if(isset($param['status']) && $param['status']!= 'all'){
             $where[] = ['status', '=', $param['status']];
         }
         if(isset($param['order_id']) && $param['order_id']){
