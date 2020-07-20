@@ -8,6 +8,7 @@
 namespace app\controller;
 
 
+use app\model\Channels;
 use app\model\Customers;
 use app\model\Tracks;
 use app\model\Users;
@@ -81,7 +82,7 @@ class Order extends BaseAdmin
 
     public function addOrder(){
         $param = Request::param();
-        $channel = getDict('channel');
+        $channel = Channels::column('channel','id');
         $type_arr = [1=>'新增', 2=>'返修'];
         $data = compact('channel', 'type_arr');
         View::assign($data);

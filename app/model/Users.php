@@ -32,7 +32,9 @@ class Users extends Model
     }
 
     public static function getTaskCount($count = 1){
-        $users = Users::where(['work_id'=>1])->select()->toArray();
+        $worker = Sets::find(1);
+        $work_id = $worker['values'];
+        $users = Users::where(['work_id'=>$work_id])->select()->toArray();
         if($users && $count){
             foreach ($users as &$row){
                 $row['task_on'] = Tasks::where(['uid'=>$row['id']])->where('status','not in', [7,9])->count();

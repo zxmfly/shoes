@@ -18,8 +18,9 @@ class Orders extends Model
         if (!$data['count']) return ['count'=>0,'data'=>[]];
         $lists = Orders::where($where)->page($page, $limit)->order('id','desc')->select()->toArray();
         $dict = getDict();
+        $channels = Channels::column('channel','id');
         foreach ($lists as &$row){
-            $row['channel'] = $dict['channel'][$row['channel_id']];
+            $row['channel'] = $channels[$row['channel_id']];
             $row['status_txt'] = $dict['order_status'][$row['status']];
             $row['finish_time'] = $row['finish_time'] ? date('Y-m-d H:is', $row['finish_time']) : '';
             $customer = Customers::find($row['customer_id']);

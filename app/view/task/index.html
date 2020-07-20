@@ -185,7 +185,7 @@
                 if(layEvent === 'repoid_copy') copyText = data.repair_order;
                 if(copyText == '') return false;
                 copy(copyText);
-                layer.msg('复制成功', {time: 1000});
+                layer.msg('复制成功', {icon: 1, time: 1000});
 
             }else if(layEvent === 'assign_task'){ //已派单
                 if(data.status >= 2){
@@ -200,10 +200,10 @@
                         if (res.code > 0) {
                             layer.msg(res.msg, {icon: 2, time: 2000});
                         } else {
-                            layer.msg(res.msg, {time: 500});
+                            layer.msg(res.msg, {icon: 1, time: 1000});
                             setTimeout(function(){
                                 tableIns.reload();
-                            },500);
+                            }, 1000);
                             layer.close(index);
                         }
                     })
@@ -240,10 +240,10 @@
                         if (res.code > 0) {
                             layer.msg(res.msg, {icon: 2, time: 2000});
                         } else {
-                            layer.msg(res.msg, {time: 500});
+                            layer.msg(res.msg, {icon: 1, time: 1000});
                             setTimeout(function(){
                                 tableIns.reload();
-                            },500);
+                            }, 1000);
                             layer.close(index);
                         }
                     })

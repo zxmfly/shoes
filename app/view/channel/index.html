@@ -1,7 +1,7 @@
 {extend name="layout/list" /}
-{block name="title"}权限列表{/block}
+{block name="title"}工作分类列表{/block}
 {block name="table"}
-<table id="groupList" lay-filter="groupList"></table>
+    <table id="fixList" lay-filter="fixList"></table>
 <script type="text/javascript">
     layui.use(['layer','form','table'],function(){
         var form = layui.form,
@@ -9,12 +9,12 @@
             $ = layui.jquery,
             table = layui.table;
 
-        var listId = 'groupList';//对应列表的唯一ID
+        var listId = 'fixList';//对应列表的唯一ID
 
         //用户列表
         var tableIns = table.render({
-            elem: '#groupList',
-            url : '/index.php/group/getList',
+            elem: '#fixList',
+            url : '/index.php/channel/getList',
             cellMinWidth : 95,
             page : true,
             height : "full-110",
@@ -24,26 +24,24 @@
             //toolbar: 'true', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
             cols : [[
                 {type: "checkbox", fixed:"left", width:50},
-                {field: 'id', title: 'ID', width:50, align:"center"},
-                {field: 'name', title: '权限组名', width:100, align:'center'},
-                {field: 'lists', title: '功能列表',  align:'center'},
-                {title: '操作', width:100, templet:'#listBar',fixed:"right",align:"center"}
+                {field: 'id', title: 'ID', minWidth:100, align:"center"},
+                {field: 'channel', title: '渠道名称', minWidth:200, align:'center'},
+                {title: '操作', minWidth:175, templet:'#listBar',fixed:"right",align:"center"}
             ]]
         });
 
-        //添加
+        //添加工作
         function add(edit){
-            var id = 0;
-            if(edit) id = edit.id;
             var index = layui.layer.open({
                 title : "添加",
                 type : 2,
-                content : "/index.php/group/add?id="+id,
+                content : "/index.php/channel/add",
                 success : function(layero, index){
                     var body = layui.layer.getChildFrame('body', index);
                     if(edit){
-                        body.find(".name").val(edit.name);
-                        body.find("#group_id").val(edit.id);
+                        body.find(".channel_id_text").text(edit.id);
+                        body.find(".channel_id").val(edit.id);  //工号
+                        body.find(".channel").val(edit.channel);  //工号
                         form.render();
                     }
                     setTimeout(function(){
@@ -74,8 +72,8 @@
                 for (var i in data) {
                     id.push(data[i].id);
                 }
-                layer.confirm('确定删除权限组？', {icon: 3, title: '提示信息'}, function (index) {
-                    $.get("/index.php/group/del",{
+                layer.confirm('确定删除选中的渠道类别？', {icon: 3, title: '提示信息'}, function (index) {
+                    $.get("/index.php/channel/del",{
                         id : id
                     },function(res){
                         if (res.code > 0) {
@@ -90,19 +88,19 @@
                     })
                 })
             }else{
-                layer.msg("请选择需要删除权限组");
+                layer.msg("请选择需要删除的渠道类别");
             }
         })
 
         //列表操作//注：tool 是工具条事件名，userList 是 table 原始容器的属性 lay-filter="对应的值"
-        table.on('tool(groupList)', function(obj){
+        table.on('tool('+listId+')', function(obj){
             var layEvent = obj.event,
                 data = obj.data;
             if(layEvent === 'edit'){ //编辑
                 add(data);
             }else if(layEvent === 'del'){ //删除
-                layer.confirm('确定删除权限组？',{icon:3, title:'提示信息'},function(index){
-                    $.get('/index.php/group/del',{
+                layer.confirm('确定删除渠道类别？',{icon:3, title:'提示信息'},function(index){
+                    $.get('/index.php/channel/del',{
                         id : data.id
                     },function(res){
                         if (res.code > 0) {

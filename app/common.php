@@ -77,4 +77,6 @@ if(!function_exists('getByIndex')){
         }
         return $results;
     }
+    // 以id为索引
+    //User::where('status',1)->column('name','id');
 }

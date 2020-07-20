@@ -1,18 +1,17 @@
 {extend name="layout/add" /}
-{block name="title"}添加工作{/block}
-{block name="filter_block"} lay-filter="addWork" {/block}
+{block name="title"}添加订单渠道{/block}
 {block name="form_block"}
 <div class="layui-form-item layui-row layui-col-xs12">
     <label class="layui-form-label">ID</label>
     <div class="layui-input-inline">
-        <input type="hidden" name="id" class="layui-input work_id" value="">
-        <div class="layui-form-mid layui-word-aux work_id_text"></div>
+        <input type="hidden" name="id" class="layui-input channel_id" value="">
+        <div class="layui-form-mid layui-word-aux channel_id_text"></div>
     </div>
 </div>
 <div class="layui-form-item layui-row layui-col-xs12">
-    <label class="layui-form-label">名称</label>
+    <label class="layui-form-label">渠道</label>
     <div class="layui-input-inline">
-        <input type="text" name="work" class="layui-input work" lay-verify="required" placeholder="请输入工作名称">
+        <input type="text" name="channel" class="layui-input channel" lay-verify="required" placeholder="请输入渠道名称">
     </div>
 </div>
 <script>
@@ -21,8 +20,8 @@
             layer = layui.layer,
             $ = layui.jquery;
 
-        form.on("submit(addWork)",function(data) {
-            $.post('/index.php/worker/addWork', data.field, function (res) {
+        form.on("submit(add)",function(data) {
+            $.post('/index.php/channel/add', data.field, function (res) {
                 if (res.code > 0) {
                     layer.msg(res.msg, {icon: 2, time: 2000});
                 } else if(res.code == 0) {

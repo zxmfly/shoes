@@ -1,19 +1,16 @@
 {extend name="layout/add" /}
-{block name="title"}添加维修类别{/block}
+{block name="title"}系统配置{/block}
 {block name="form_block"}
+{foreach $keys as $k => $v}
 <div class="layui-form-item layui-row layui-col-xs12">
-    <label class="layui-form-label">ID</label>
+    <label class="layui-form-label">{$v.title}</label>
     <div class="layui-input-inline">
-        <input type="hidden" name="id" class="layui-input fix_id" value="">
-        <div class="layui-form-mid layui-word-aux fix_id_text"></div>
+        <input type="text" name="{$k}k" placeholder="请输入{$v.title}" lay-verify="required{$v.rule ? '|'.$v.rule : ''}" class="layui-input"
+               value="{$sets[$k] ? $sets[$k] : '' }">
     </div>
+    <div class="layui-form-mid layui-word-aux">{$v.explain}</div>
 </div>
-<div class="layui-form-item layui-row layui-col-xs12">
-    <label class="layui-form-label">名称</label>
-    <div class="layui-input-inline">
-        <input type="text" name="name" class="layui-input fix_name" lay-verify="required" placeholder="请输入维修名称">
-    </div>
-</div>
+{/foreach}
 <script>
     layui.use(['form','layer'],function(){
         var form = layui.form,
@@ -21,15 +18,13 @@
             $ = layui.jquery;
 
         form.on("submit(add)",function(data) {
-            $.post('/index.php/task/addFix', data.field, function (res) {
+            $.post('/index.php/set/edit', data.field, function (res) {
                 if (res.code > 0) {
                     layer.msg(res.msg, {icon: 2, time: 2000});
                 } else if(res.code == 0) {
                     layer.msg(res.msg, {icon: 1, time: 1000});
                     setTimeout(function(){
-                        layer.closeAll("iframe");
-                        //刷新父页面
-                        parent.location.reload();
+                        form.render();
                     },1000);
                 }else{
                     layer.msg('保存失败', {icon: 2, time: 500});

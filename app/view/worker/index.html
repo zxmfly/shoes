@@ -47,7 +47,7 @@
                 {field: 'name', title: '姓名', align:'center'},
                 {field: 'sex_text', title: '性别', align:'center'},
                 {field: 'work_text', title: '部门', align:'center'},
-                {field: 'role_text', title: '权限', align:'center'},
+                {field: 'role_text', title: '权限组', align:'center'},
                 {field: 'status_text', title: '状态',  align:'center'},
                 {field: 'create_time', title: '加入时间', align:'center'},
                 {title: '操作', minWidth:110, templet:'#listBar',fixed:"right",align:"center"}
@@ -126,10 +126,10 @@
                         if (res.code > 0) {
                             layer.msg(res.msg, {icon: 2, time: 2000});
                         } else {
-                            layer.msg(res.msg, {time: 500});
+                            layer.msg(res.msg, {icon: 1, time: 1000});
                             setTimeout(function(){
                                 tableIns.reload();
-                            },500);
+                            }, 1000);
                             layer.close(index);
                         }
                     })

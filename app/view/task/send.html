@@ -79,10 +79,10 @@
                         if (res.code > 0) {
                             layer.msg(res.msg, {icon: 2, time: 2000});
                         } else {
-                            layer.msg(res.msg, {time: 500});
+                            layer.msg(res.msg, {icon: 1, time: 1000});
                             setTimeout(function(){
                                 tableIns.reload();
-                            },500);
+                            }, 1000);
                             layer.close(index);
                         }
                     })

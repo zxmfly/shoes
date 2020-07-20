@@ -52,12 +52,12 @@
                 if (res.code > 0) {
                     layer.msg(res.msg, {icon: 2, time: 2000});
                 } else if(res.code == 0) {
-                    layer.msg(res.msg, {time: 500});
+                    layer.msg(res.msg, {icon: 1, time: 1000});
                     setTimeout(function(){
                         layer.closeAll("iframe");
                         //刷新父页面
                         parent.location.reload();
-                    },2000);
+                    },1000);
                 }else{
                     layer.msg('保存失败', {icon: 2, time: 500});
                 }
